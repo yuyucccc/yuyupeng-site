@@ -1,0 +1,361 @@
+{
+  "site": {
+    "name": "Yuyu Peng",
+    "role": "Landscape Architect",
+    "domain": "yuyupeng.com",
+    "email": "betweenness.u@outlook.com",
+    "location": "Utrecht, NL",
+    "statement": "I perceive my role as a bridge between people and nature, using spatial design to bring them closer together. I specialise in urban landscapes, driven by a specific goal: to actively contribute to the rewilding of our cities.",
+    "meta_description": "Portfolio of Yuyu Peng, landscape architect based in Utrecht — public space, playgrounds and urban landscapes for Gemeente Utrecht and Buro Sant en Co."
+  },
+  "projects": [
+    {
+      "slug": "kameleon-speelplaats",
+      "title": "Kameleon speelplaats",
+      "place": "Pijlsweerd, Utrecht",
+      "years": "2024–2025",
+      "group": "professional",
+      "lead": "A worn-out playground in one of Utrecht's densest quarters, rebuilt as ground rather than pavement.",
+      "body": [
+        "De Kameleon sits on the Balkstraat in Pijlsweerd, a dense nineteenth-century quarter where private gardens are rare and the street is the only open space most children have. The existing playground had worn out — hard surfacing, ageing equipment, hardly any shade.",
+        "The new design trades paving for ground. Rainwater is held in the soil instead of drained away, the existing trees are kept and given room, and play is redistributed by age: a water play area in sand for the youngest, grass mounds and a climbing tower beyond.",
+        "Almost everything that could be reused was reused — the paving bricks, the seating edges stacked from existing concrete tiles, and half of the play equipment, relocated rather than replaced."
+      ],
+      "meta": [
+        ["Assignment", "Speelplaats"],
+        ["Firm", "Gemeente Utrecht"],
+        ["Design", "2024–2025"],
+        ["Status", "Realised"],
+        ["Team", "Stadsingenieurs, Ruimte"]
+      ],
+      "captions": {
+        "01": "De Kameleon after completion, spring 2026",
+        "02": "The old situation",
+        "08": "Definitief Ontwerp, plankaart 1:200"
+      }
+    },
+    {
+      "slug": "kei-3-0",
+      "title": "KEI 3.0",
+      "place": "Kanaleneiland, Utrecht",
+      "years": "2025–ongoing",
+      "group": "professional",
+      "lead": "Three street reconstructions running in parallel, designed as one continuous landscape.",
+      "body": [
+        "KEI 3.0 — KanalenEiland Integraal — is the team behind the reconstruction of the public space of Kanaleneiland, a post-war expansion district in the south-west of Utrecht. Three areas run in parallel: Afrikalaan e.o., Van Heuven Goedhartlaan e.o. and Kanaleneiland Zuid Midden, each at a different point in the planning process.",
+        "Running the three together makes it possible to treat the district as one landscape rather than three separate projects. The ambition is that standing in the street you should not be able to tell where one plan area ends and the next begins.",
+        "Within an integrated design team — green, traffic, landscape, cables and pipes, soil, water and sustainability — we work on the streets and the courtyards between the blocks: continuous cycle routes, room for trees above ground and below it, and rainwater kept in the district."
+      ],
+      "meta": [
+        ["Assignment", "Openbare ruimte"],
+        ["Firm", "Gemeente Utrecht"],
+        ["Design", "2025–ongoing"],
+        ["Status", "SO / VO"],
+        ["Team", "Stadsingenieurs, Ruimte"]
+      ],
+      "captions": {
+        "01": "Groenstructuur Kanaleneiland — analysis",
+        "02": "Stanleylaan — existing situation",
+        "03": "Stanleylaan — new impression",
+        "07": "Afrikalaan e.o. — VO plankaart"
+      }
+    },
+    {
+      "slug": "van-eysingalaan",
+      "title": "Blokplek Van Eysingalaan",
+      "place": "Transwijk, Utrecht",
+      "years": "2025",
+      "group": "professional",
+      "lead": "A block courtyard the neighbourhood had stopped using — narrowed in programme, widened in audience.",
+      "body": [
+        "The blokplek at Van Eysingalaan 137–199 lies between four housing blocks in Transwijk. Its football cage and basketball court had become the territory of teenagers from further afield, and the children living around it had stopped coming — the survey found almost no resident who said their child played there.",
+        "Rather than adding programme, the design narrows it and widens the audience. The cage is rebuilt with sound-dampening fencing on an artificial turf field; the basketball court makes way for a table-tennis table and a jeu de boules court; the hard edges give way to grass, shrubs and new trees.",
+        "Seating poufs and bins are spread across the site — the two things residents asked for most. Almost all of the material, from the benches to the cobble strips, comes back out of the municipal depot."
+      ],
+      "meta": [
+        ["Assignment", "Sport- en speelplek"],
+        ["Firm", "Gemeente Utrecht"],
+        ["Design", "2025"],
+        ["Status", "Realised"],
+        ["Team", "Stadsingenieurs, Ruimte"]
+      ],
+      "captions": {
+        "01": "Blokplek Van Eysingalaan after completion",
+        "04": "Definitief Ontwerp, kader 1:100",
+        "05": "Profielen"
+      }
+    },
+    {
+      "slug": "city-nieuwegein",
+      "title": "City Nieuwegein",
+      "place": "Nieuwegein",
+      "years": "2022–ongoing",
+      "group": "professional",
+      "lead": "A spatial quality framework for a town centre built on a deck, turning its level changes into a water landscape.",
+      "body": [
+        "Nieuwegein City is a bustling urban atmosphere inside a village setting. Its distinctive feature is an elevated, covered shopping centre where cars park beneath the shops — an infrastructural environment of varying heights and levels, pedestrian bridges and bicycle tunnels.",
+        "The town was established through the growth-centre policy, by merging two villages. As the centre keeps expanding it needs a recognisable identity, and a strategic vision to guide that growth. Reading the city's origins and transformation uncovered its evolving role: from growth centre to a green, sustainable oasis.",
+        "The deck currently gives water almost no space, so peak rainfall causes waterlogging while the elevated landscape dries out. Buffering water becomes the organising principle — a river landscape used as the framework for the whole centre."
+      ],
+      "meta": [
+        ["Assignment", "Visie"],
+        ["Firm", "Buro Sant en Co"],
+        ["Design", "2022–ongoing"],
+        ["Status", "Tender / VO"],
+        ["Collaborations", "Gemeente Nieuwegein"],
+        ["Team", "Paul Plambeck, Merel Cozlijsen, Ran Yan"]
+      ],
+      "captions": {
+        "01": "City within a village",
+        "02": "River landscape as a framework"
+      }
+    },
+    {
+      "slug": "groene-zoom",
+      "title": "Groene zoom",
+      "place": "IJdoornschoollocatie, Amsterdam",
+      "years": "2021–ongoing",
+      "group": "professional",
+      "lead": "A green seam stitching two Amsterdam-Noord neighbourhoods together, designed as habitat as much as public space.",
+      "body": [
+        "The task was to develop a green urban location with multiple spatial and functional purposes, as part of the urban renewal plan for the Waterlandplein neighbourhood. The area connects Tuindorp Nieuwendam and Waterlandplein, and offers the chance to create a harmonious link between them.",
+        "Its character comes from a green axis running from the Schellingwouderbreek across both neighbourhoods towards the Baanakkerspark and the landscape beyond. The development focuses on urban nature, climate adaptation and shared use, integrating new building blocks into the landscape rather than dropping them onto it.",
+        "The design also works on continuity of experience: the red brick from the Puccini handbook is pulled in from street level, through the building and across the stairs to the meeting garden, gradually transforming into a carpet of varying brick shades."
+      ],
+      "meta": [
+        ["Assignment", "Public space"],
+        ["Firm", "Buro Sant en Co"],
+        ["Design", "2021–ongoing"],
+        ["Status", "SO / VO"],
+        ["Collaborations", "Gemeente Amsterdam"],
+        ["Team", "Sander Singor, Purvika Awasthi"]
+      ],
+      "captions": {
+        "06": "Groene schakel",
+        "07": "Optimaal verbonden sport en spel"
+      }
+    },
+    {
+      "slug": "parkstraat",
+      "title": "Parkstraat",
+      "place": "Apeldoorn",
+      "years": "2022–ongoing",
+      "group": "professional",
+      "lead": "The southern half of a city street rebuilt as the link from the station to Paleis Het Loo.",
+      "body": [
+        "The Municipality of Apeldoorn asked us for a preliminary design for the southern part of Parkstraat, as part of the transformation from Hoofdstraat to Parkstraat, building on the vision and model study we developed in 2021. The design was crafted through an intensive co-creation process with stakeholders.",
+        "The aim is a strong, recognisable connection between the station area and Griftpark — a vital link from the station to Paleis Het Loo. Parkstraat Zuid becomes a full urban street in the south and a liveable street in the north, without losing its role in the city centre.",
+        "Emphasis is on greening and distinctiveness, to avoid uniformity with other cities: a sense of place that reflects Apeldoorn's own landscape and royal history. Because its functions keep changing, the street needs a flexible design — a robust structure with a prominent promenade that can be adjusted over time."
+      ],
+      "meta": [
+        ["Assignment", "Public space"],
+        ["Firm", "Buro Sant en Co"],
+        ["Design", "2022–ongoing"],
+        ["Status", "Tender / VO"],
+        ["Collaborations", "Gemeente Apeldoorn"],
+        ["Team", "Paul Plambeck, Merel Cozlijsen"]
+      ],
+      "captions": {
+        "02": "The spatial structure of Parkstraat Zuid",
+        "03": "The functioning of Parkstraat Zuid"
+      }
+    },
+    {
+      "slug": "kloppend-hart-soest",
+      "title": "Het kloppend hart van Soest",
+      "place": "Dalweg, Soest",
+      "years": "2023",
+      "group": "professional",
+      "lead": "A fragmented terrain in Soest pulled back together by a single landscape framework.",
+      "body": [
+        "Within the landscape of Soest, the task was to transform a fragmented and intersected terrain into something coherent — a place where the old and the new sit together rather than side by side.",
+        "At the heart of the site we introduce a guiding framework: an organising principle that unifies the diverse elements. Designed to a human scale, this landscape framework builds a working relationship between the architecture and the natural world.",
+        "Further into the project, the collective woodland and the municipal park come together to define the destination — nature and community merged into a single haven in the centre of Soest."
+      ],
+      "meta": [
+        ["Assignment", "Stedenbouw"],
+        ["Firm", "Buro Sant en Co"],
+        ["Design", "2023"],
+        ["Status", "Tender"],
+        ["Collaborations", "AM, Gemeente Soest"],
+        ["Team", "Paul Plambeck, Merel Cozlijsen"]
+      ],
+      "captions": {}
+    },
+    {
+      "slug": "jaarbeursplein",
+      "title": "Jaarbeursplein",
+      "place": "Utrecht",
+      "years": "2023",
+      "group": "professional",
+      "lead": "A square that behaves as a park — a gradient from forest calm to plaza energy.",
+      "body": [
+        "The Jaarbeursplein unfolds from the steps of the Forum and wraps around the Jaarbeurspleingebouw. It is a Jaarbeurspark that wears multiple faces, revealing its versatility and adaptability.",
+        "The square extends seamlessly into the lobby of the building, connecting the built environment to the landscape. That landscape forms a gradient, transitioning from the tranquillity of a park to the vibrant energy of a plaza, with inviting spaces at a human scale and a pleasant microclimate.",
+        "Set against a natural backdrop, the building and its surroundings gain a setting for a range of activities — including the unusual opportunity to play sport inside a continuous forest-like environment."
+      ],
+      "meta": [
+        ["Assignment", "Stedenbouw & public space"],
+        ["Firm", "Buro Sant en Co"],
+        ["Design", "2023"],
+        ["Status", "Tender"],
+        ["Collaborations", "AM, Henning Larsen, cepezed"],
+        ["Team", "Paul Plambeck, Merel Cozlijsen"]
+      ],
+      "captions": {}
+    },
+    {
+      "slug": "de-koploper",
+      "title": "De Koploper",
+      "place": "Delft",
+      "years": "2023",
+      "group": "professional",
+      "lead": "A building designed as an ecosystem, with each biotope tied to its own indicator species.",
+      "body": [
+        "Working with Stadsnatuur, a nature-focused agency, we developed the building as an ecosystem. Extensive greenery at various heights forms an ecological connection between parcel 6, the Van Leeuwenhoekpark and the Delft canals. Each biotope is associated with indicator species that contribute to the functioning of the wider urban ecosystem.",
+        "The building is designed as an attractive habitat for local wildlife, providing food and nesting opportunities. The biotopes are closely interlinked: the upper rooftops with their grass and herb layers attract insects, which benefit the bats and swifts nesting in the façade. Bee species are drawn to the flowering plants on the rooftop field and pollinate the garden's crops.",
+        "The precise mix of vegetation in the inner garden creates a nectar source for insects and butterflies. Song thrushes, blackbirds and goldfinches forage among the low vegetation and nest in native trees, with berry-laden shrubs as an extra food source."
+      ],
+      "meta": [
+        ["Assignment", "Daktuin"],
+        ["Firm", "Buro Sant en Co"],
+        ["Design", "2023"],
+        ["Status", "Tender"],
+        ["Collaborations", "WAA-TSA, Stadsnatuur, cepezed"],
+        ["Team", "Sander Singor, Coos van Ginkel, Darina Awasthi"]
+      ],
+      "captions": {}
+    },
+    {
+      "slug": "sport-dak-park",
+      "title": "Sport Dak Park",
+      "place": "Smart Mobility Hub, Amsterdam",
+      "years": "2021–ongoing",
+      "group": "professional",
+      "lead": "A sports park ten metres up, on the roof of a mobility hub.",
+      "body": [
+        "With increasing urbanisation and the acceleration of daily life, the need for sport, greenery, relaxation and time with friends and family is greater than ever. At a height of ten metres, a place is being created where all of this is possible: the sports park on top of the future Smart Mobility Hub.",
+        "The park is designed so that every user can take it on their own terms — from the (wheelchair) basketball player, the urban athlete and the football club that has its home base here, to the parents bringing children to the playground and the person who simply wants to sit quietly among the greenery.",
+        "Its functions are no longer separated from one another but placed in a single integral landscape — organised and unorganised sport meeting in the same place. The park is designed with the input of future users and residents, building a shared sense of pride and of responsibility for it."
+      ],
+      "meta": [
+        ["Assignment", "Roof park"],
+        ["Firm", "Buro Sant en Co"],
+        ["Design", "2021–ongoing"],
+        ["Status", "SO–DO"],
+        ["Collaborations", "cepezed"],
+        ["Team", "Sander Singor, Nina de Munnik"]
+      ],
+      "captions": {
+        "05": "Section — kidzone",
+        "06": "Section — freefun",
+        "07": "Section — pumptrack"
+      }
+    },
+    {
+      "slug": "tuin-van-overhoeks",
+      "title": "De daktuin van Overhoeks",
+      "place": "Amsterdam",
+      "years": "2021",
+      "group": "professional",
+      "lead": "A roof garden organised around one long, sinuous stone bench.",
+      "body": [
+        "In this roof garden, architecture and nature become one. A long, sinuous bench of natural stone serves a dual purpose — a comfortable place to sit, and a guiding element through a landscape of dense planting.",
+        "Its flowing lines and concealed lighting create an atmosphere in which aesthetics and function are indistinguishable. The design turns the roof into a coherent, immersive space where every element has a job to do."
+      ],
+      "meta": [
+        ["Assignment", "Roofgarden"],
+        ["Firm", "Buro Sant en Co"],
+        ["Design", "2021"],
+        ["Status", "TO"],
+        ["Collaborations", "rots-maatwerk"],
+        ["Team", "Paul Plambeck, Jie Yang"]
+      ],
+      "captions": {}
+    },
+    {
+      "slug": "interaction",
+      "title": "Interaction",
+      "place": "Shenzhen, China",
+      "years": "2017",
+      "group": "academic",
+      "lead": "Rebuilding the water cycle between sea and land, on a forgotten mangrove edge of Shenzhen.",
+      "body": [
+        "All that exists on land exists in the sea. Since ancient times the cycle between the two has been a condition for symbiosis; as the city develops, we gradually lose that balance. The site lies in Baoshan District, Shenzhen — a margin the city has forgotten, with a large number of urban sewage outfalls and mangroves declining year by year.",
+        "Shenzhen is a water-short city, so the design takes the water cycle as its entry point for restoring the relationship between sea and land. Two main streamlines run through the site: sewage purification from the city to the ocean, and seawater desalination from the sea back to the city.",
+        "A series of ecological restoration measures becomes a series of places where people meet the process directly. The cycle of natural materials is combined with daily life and recreation — production is the landscape."
+      ],
+      "meta": [
+        ["Date", "2017"],
+        ["Type", "Academic work"],
+        ["Supervisor", "Wei Xuerao"],
+        ["Collaborations", "Xie Zhuohan"]
+      ],
+      "captions": {
+        "02": "Site analysis — existing water system",
+        "03": "New water treatment system"
+      }
+    },
+    {
+      "slug": "tidal-park",
+      "title": "Tidal Park",
+      "place": "Hook of Holland, NL",
+      "years": "2018",
+      "group": "academic",
+      "lead": "Embracing water into landscape — a park shaped by the tide rather than defended from it.",
+      "body": [
+        "A study of what happens when a coastal landscape is allowed to work with the tide instead of resisting it. The terrain is modelled so that water reaches different levels at different moments, producing a park that reads differently at every hour of the tidal cycle.",
+        "The drawings test a sequence of ground conditions — from permanently wet to rarely flooded — and the vegetation and access each of them can carry."
+      ],
+      "meta": [
+        ["Date", "2018"],
+        ["Type", "Academic work"],
+        ["Supervisor", "Inge Bobbink"]
+      ],
+      "captions": {},
+      "draft_note": "本项目原 PDF 里没有正文，这段是我根据图纸和副标题写的草稿"
+    },
+    {
+      "slug": "beautiful-decay",
+      "title": "Beautiful decay",
+      "place": "Venice, Italy",
+      "years": "2016",
+      "group": "academic",
+      "lead": "Landscape as media between public life and nature, in a Venice that floods on schedule.",
+      "body": [
+        "Acqua alta — the exceptional tidal peaks of the northern Adriatic — floods Piazza San Marco on a predictable rhythm. The project treats that flooding not as a failure to be engineered away but as the condition the public space is built around.",
+        "Based on the arcade, the basic form is disassembled and reassembled: changes in height are tied to the flood levels, producing a rich variety of conditions that adapt to different activities and echo the existing structure of the square."
+      ],
+      "meta": [
+        ["Date", "2016"],
+        ["Type", "Academic work"],
+        ["Supervisor", "Albertus Wang, Francesco Cappellari"],
+        ["Award", "2nd Prize, Overseas Operations of Architectural Institute, 2016"]
+      ],
+      "captions": {},
+      "draft_note": "正文是我根据原书 p58/p59 的零散文字和图纸重写的草稿"
+    },
+    {
+      "slug": "circular-community",
+      "title": "Circular Community",
+      "place": "Rotterdam, NL",
+      "years": "2018",
+      "group": "academic",
+      "lead": "A food-community lab: closing the loop between what a neighbourhood eats, wastes and grows.",
+      "body": [
+        "The project proposes a circular community around food — production, consumption and waste treated as one continuous flow rather than three separate systems.",
+        "A water square and a green carpet along the A20 carry the public side of that system, while the detailed plans work out how the flows move through the blocks: growing, harvesting, composting and returning to the soil within walking distance."
+      ],
+      "meta": [
+        ["Date", "2018"],
+        ["Type", "Academic work"],
+        ["Supervisor", "Nico Tillie"]
+      ],
+      "captions": {
+        "06": "Detailed plan — water square",
+        "07": "Detailed plan — A20 green carpet"
+      },
+      "draft_note": "正文是我根据图纸标题写的草稿"
+    }
+  ]
+}

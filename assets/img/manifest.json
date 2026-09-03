@@ -1,0 +1,574 @@
+{
+ "kameleon-speelplaats": [
+  {
+   "file": "01.jpg",
+   "w": 1800,
+   "h": 959,
+   "src_page": 3
+  },
+  {
+   "file": "02.jpg",
+   "w": 821,
+   "h": 578,
+   "src_page": 3
+  },
+  {
+   "file": "03.jpg",
+   "w": 1800,
+   "h": 765,
+   "src_page": 4
+  },
+  {
+   "file": "04.jpg",
+   "w": 1096,
+   "h": 1455,
+   "src_page": 4
+  },
+  {
+   "file": "05.jpg",
+   "w": 1099,
+   "h": 1446,
+   "src_page": 4
+  },
+  {
+   "file": "06.jpg",
+   "w": 1095,
+   "h": 823,
+   "src_page": 4
+  },
+  {
+   "file": "07.jpg",
+   "w": 1046,
+   "h": 816,
+   "src_page": 4
+  },
+  {
+   "file": "08.jpg",
+   "w": 1800,
+   "h": 1271
+  }
+ ],
+ "kei-3-0": [
+  {
+   "file": "01.jpg",
+   "w": 1211,
+   "h": 869,
+   "src_page": 5
+  },
+  {
+   "file": "02.jpg",
+   "w": 1303,
+   "h": 694,
+   "src_page": 5
+  },
+  {
+   "file": "03.jpg",
+   "w": 1281,
+   "h": 562,
+   "src_page": 5
+  },
+  {
+   "file": "04.jpg",
+   "w": 1732,
+   "h": 883,
+   "src_page": 6
+  },
+  {
+   "file": "05.jpg",
+   "w": 1731,
+   "h": 880,
+   "src_page": 6
+  },
+  {
+   "file": "06.jpg",
+   "w": 1800,
+   "h": 641,
+   "src_page": 6
+  },
+  {
+   "file": "07.jpg",
+   "w": 1372,
+   "h": 630,
+   "src_page": 6
+  },
+  {
+   "file": "08.jpg",
+   "w": 830,
+   "h": 929,
+   "src_page": 6
+  }
+ ],
+ "van-eysingalaan": [
+  {
+   "file": "01.jpg",
+   "w": 1800,
+   "h": 1350
+  },
+  {
+   "file": "02.jpg",
+   "w": 1800,
+   "h": 1350
+  },
+  {
+   "file": "03.jpg",
+   "w": 1800,
+   "h": 1350
+  },
+  {
+   "file": "04.jpg",
+   "w": 1800,
+   "h": 1271
+  },
+  {
+   "file": "05.jpg",
+   "w": 1800,
+   "h": 2549
+  }
+ ],
+ "city-nieuwegein": [
+  {
+   "file": "01.jpg",
+   "w": 1800,
+   "h": 1467,
+   "src_page": 8
+  },
+  {
+   "file": "02.jpg",
+   "w": 1800,
+   "h": 1467,
+   "src_page": 8
+  },
+  {
+   "file": "03.jpg",
+   "w": 968,
+   "h": 974,
+   "src_page": 9
+  },
+  {
+   "file": "04.jpg",
+   "w": 668,
+   "h": 899,
+   "src_page": 9
+  },
+  {
+   "file": "05.jpg",
+   "w": 625,
+   "h": 921,
+   "src_page": 9
+  },
+  {
+   "file": "06.jpg",
+   "w": 686,
+   "h": 577,
+   "src_page": 9
+  },
+  {
+   "file": "07.jpg",
+   "w": 624,
+   "h": 525,
+   "src_page": 9
+  },
+  {
+   "file": "08.jpg",
+   "w": 1273,
+   "h": 812,
+   "src_page": 10
+  }
+ ],
+ "groene-zoom": [
+  {
+   "file": "01.jpg",
+   "w": 1245,
+   "h": 1759,
+   "src_page": 11
+  },
+  {
+   "file": "02.jpg",
+   "w": 1245,
+   "h": 1759,
+   "src_page": 12
+  },
+  {
+   "file": "03.jpg",
+   "w": 841,
+   "h": 623,
+   "src_page": 12
+  },
+  {
+   "file": "04.jpg",
+   "w": 841,
+   "h": 605,
+   "src_page": 12
+  },
+  {
+   "file": "05.jpg",
+   "w": 841,
+   "h": 505,
+   "src_page": 12
+  },
+  {
+   "file": "06.jpg",
+   "w": 1246,
+   "h": 914,
+   "src_page": 13
+  },
+  {
+   "file": "07.jpg",
+   "w": 1245,
+   "h": 914,
+   "src_page": 13
+  },
+  {
+   "file": "08.jpg",
+   "w": 1111,
+   "h": 690,
+   "src_page": 13
+  }
+ ],
+ "parkstraat": [
+  {
+   "file": "01.jpg",
+   "w": 1245,
+   "h": 1759,
+   "src_page": 15
+  },
+  {
+   "file": "02.jpg",
+   "w": 1245,
+   "h": 1751,
+   "src_page": 16
+  },
+  {
+   "file": "03.jpg",
+   "w": 1113,
+   "h": 1759,
+   "src_page": 17
+  },
+  {
+   "file": "04.jpg",
+   "w": 1212,
+   "h": 830,
+   "src_page": 17
+  },
+  {
+   "file": "05.jpg",
+   "w": 1212,
+   "h": 747,
+   "src_page": 17
+  }
+ ],
+ "kloppend-hart-soest": [
+  {
+   "file": "01.jpg",
+   "w": 1245,
+   "h": 1338,
+   "src_page": 18
+  },
+  {
+   "file": "02.jpg",
+   "w": 1243,
+   "h": 1338,
+   "src_page": 18
+  },
+  {
+   "file": "03.jpg",
+   "w": 1245,
+   "h": 1715,
+   "src_page": 19
+  },
+  {
+   "file": "04.jpg",
+   "w": 1219,
+   "h": 856,
+   "src_page": 19
+  },
+  {
+   "file": "05.jpg",
+   "w": 628,
+   "h": 565,
+   "src_page": 19
+  },
+  {
+   "file": "06.jpg",
+   "w": 651,
+   "h": 451,
+   "src_page": 19
+  },
+  {
+   "file": "07.jpg",
+   "w": 651,
+   "h": 435,
+   "src_page": 19
+  }
+ ],
+ "jaarbeursplein": [
+  {
+   "file": "01.jpg",
+   "w": 737,
+   "h": 1038,
+   "src_page": 20
+  },
+  {
+   "file": "02.jpg",
+   "w": 1245,
+   "h": 1713,
+   "src_page": 21
+  },
+  {
+   "file": "03.jpg",
+   "w": 978,
+   "h": 1713,
+   "src_page": 21
+  }
+ ],
+ "de-koploper": [
+  {
+   "file": "01.jpg",
+   "w": 1245,
+   "h": 1331,
+   "src_page": 22
+  },
+  {
+   "file": "02.jpg",
+   "w": 1245,
+   "h": 1331,
+   "src_page": 22
+  },
+  {
+   "file": "03.jpg",
+   "w": 1245,
+   "h": 1759,
+   "src_page": 23
+  },
+  {
+   "file": "04.jpg",
+   "w": 1210,
+   "h": 925,
+   "src_page": 23
+  },
+  {
+   "file": "05.jpg",
+   "w": 1076,
+   "h": 640,
+   "src_page": 23
+  }
+ ],
+ "sport-dak-park": [
+  {
+   "file": "01.jpg",
+   "w": 1245,
+   "h": 1428,
+   "src_page": 24
+  },
+  {
+   "file": "02.jpg",
+   "w": 899,
+   "h": 600,
+   "src_page": 25
+  },
+  {
+   "file": "03.jpg",
+   "w": 899,
+   "h": 576,
+   "src_page": 25
+  },
+  {
+   "file": "04.jpg",
+   "w": 985,
+   "h": 520,
+   "src_page": 25
+  },
+  {
+   "file": "05.jpg",
+   "w": 986,
+   "h": 503,
+   "src_page": 25
+  },
+  {
+   "file": "06.jpg",
+   "w": 898,
+   "h": 551,
+   "src_page": 25
+  },
+  {
+   "file": "07.jpg",
+   "w": 982,
+   "h": 500,
+   "src_page": 25
+  }
+ ],
+ "tuin-van-overhoeks": [
+  {
+   "file": "01.jpg",
+   "w": 1245,
+   "h": 1759,
+   "src_page": 26
+  },
+  {
+   "file": "02.jpg",
+   "w": 1139,
+   "h": 911,
+   "src_page": 27
+  }
+ ],
+ "interaction": [
+  {
+   "file": "01.jpg",
+   "w": 1242,
+   "h": 1754,
+   "src_page": 28
+  },
+  {
+   "file": "02.jpg",
+   "w": 1243,
+   "h": 1754,
+   "src_page": 29
+  },
+  {
+   "file": "03.jpg",
+   "w": 1243,
+   "h": 1754,
+   "src_page": 29
+  },
+  {
+   "file": "04.jpg",
+   "w": 1208,
+   "h": 452,
+   "src_page": 29
+  },
+  {
+   "file": "05.jpg",
+   "w": 1243,
+   "h": 885,
+   "src_page": 30
+  },
+  {
+   "file": "06.jpg",
+   "w": 1243,
+   "h": 885,
+   "src_page": 30
+  },
+  {
+   "file": "07.jpg",
+   "w": 1243,
+   "h": 416,
+   "src_page": 30
+  },
+  {
+   "file": "08.jpg",
+   "w": 1243,
+   "h": 416,
+   "src_page": 30
+  }
+ ],
+ "tidal-park": [
+  {
+   "file": "01.jpg",
+   "w": 1283,
+   "h": 958,
+   "src_page": 34
+  },
+  {
+   "file": "02.jpg",
+   "w": 1272,
+   "h": 947,
+   "src_page": 34
+  },
+  {
+   "file": "03.jpg",
+   "w": 1256,
+   "h": 831,
+   "src_page": 34
+  },
+  {
+   "file": "04.jpg",
+   "w": 1162,
+   "h": 822,
+   "src_page": 34
+  },
+  {
+   "file": "05.jpg",
+   "w": 1115,
+   "h": 789,
+   "src_page": 34
+  }
+ ],
+ "beautiful-decay": [
+  {
+   "file": "01.jpg",
+   "w": 1246,
+   "h": 881,
+   "src_page": 35
+  },
+  {
+   "file": "02.jpg",
+   "w": 1208,
+   "h": 855,
+   "src_page": 35
+  },
+  {
+   "file": "03.jpg",
+   "w": 1122,
+   "h": 794,
+   "src_page": 35
+  }
+ ],
+ "circular-community": [
+  {
+   "file": "01.jpg",
+   "w": 1727,
+   "h": 1319,
+   "src_page": 36
+  },
+  {
+   "file": "02.jpg",
+   "w": 1233,
+   "h": 873,
+   "src_page": 36
+  },
+  {
+   "file": "03.jpg",
+   "w": 1179,
+   "h": 834,
+   "src_page": 36
+  },
+  {
+   "file": "04.jpg",
+   "w": 1112,
+   "h": 787,
+   "src_page": 36
+  },
+  {
+   "file": "05.jpg",
+   "w": 1021,
+   "h": 722,
+   "src_page": 36
+  },
+  {
+   "file": "06.jpg",
+   "w": 948,
+   "h": 671,
+   "src_page": 36
+  },
+  {
+   "file": "07.jpg",
+   "w": 907,
+   "h": 642,
+   "src_page": 36
+  },
+  {
+   "file": "08.jpg",
+   "w": 875,
+   "h": 619,
+   "src_page": 36
+  }
+ ],
+ "_cover": [
+  {
+   "file": "01.jpg",
+   "w": 968,
+   "h": 1692,
+   "src_page": 1
+  }
+ ]
+}
