@@ -190,6 +190,17 @@ html{scrollbar-color:var(--moss) var(--ground);scrollbar-width:thin;caret-color:
 /* figures */
 .plate{padding:0;margin:0 0 var(--gut)}
 .plate img{width:100%}
+/* Never enlarge a drawing past its own pixels, and never let a portrait plate
+   run taller than the screen. --nw is the image's native width, set per image.
+   Below 48rem the phone is narrower than every asset, so full-bleed is right. */
+@media(min-width:48rem){
+  .plate img{
+    width:auto;
+    max-width:min(100%,var(--nw,100%));
+    max-height:86vh;
+    margin-inline:auto;
+  }
+}
 .plate figcaption{
   padding:.7rem var(--pad) .95rem;font-size:.8125rem;color:var(--ink-soft);
   font-style:italic;

@@ -177,8 +177,12 @@ def render_project(p, nxt):
         key = i["file"].split(".")[0]
         cap = caps.get(key)
         figcap = f'<figcaption>{e(cap)}</figcaption>' if cap else ""
+        # --nw carries the image's native pixel width so CSS can refuse to
+        # upscale it. Most of these come out of a print PDF at ~1250 px; blown
+        # to a 1365 px panel they go soft, and portraits grow past a screen.
         return f"""<figure class="plate rise panel panel--flush">
   <img src="../../assets/img/{p['slug']}/{i['file']}" width="{i['w']}" height="{i['h']}"
+   style="--nw:{i['w']}px"
    {'fetchpriority="high"' if eager else 'loading="lazy"'} decoding="async"
    alt="{e(p['title'])} — {e(cap) if cap else 'project drawing'}">
   {figcap}
