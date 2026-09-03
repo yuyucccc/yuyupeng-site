@@ -16,6 +16,22 @@ SITE, PROJECTS = DATA["site"], DATA["projects"]
 YEAR = datetime.date.today().year
 
 e = lambda s: html.escape(str(s), quote=True)
+
+# Foreign terms inside English prose take italic — the ordinary typographic
+# convention, and it gives the page the roman/italic texture the type reference
+# lives on without inventing emphasis that is not there. Place names stay roman.
+FOREIGN = ["Definitief Ontwerp", "Voorlopig Ontwerp", "Sport- en speelplek",
+           "Openbare ruimte", "Groenstructuur", "Stadsingenieurs", "Stedenbouw",
+           "inrichtingsplan", "plankaart", "speelplaats", "blokplek", "daktuin",
+           "Daktuin", "Speelplaats", "Blokplek", "Visie", "jeu de boules",
+           "acqua alta", "Acqua alta"]
+_FOREIGN_RE = re.compile(r"(?<![\w>])(" + "|".join(
+    sorted((re.escape(w) for w in FOREIGN), key=len, reverse=True)) + r")(?![\w<])")
+
+def it(escaped):
+    """Wrap foreign terms in <em>. Input must already be HTML-escaped."""
+    return _FOREIGN_RE.sub(r"<em>\1</em>", escaped)
+
 EMD = "\u2014"   # em dash, kept out of f-string expressions (py3.9)
 
 # ── authored botanical marks ────────────────────────────────────────────
@@ -66,7 +82,7 @@ def head(title, desc, rel, canonical):
 <meta property="og:url" content="{e(canonical)}">
 <meta name="theme-color" content="#454E22">
 <link rel="icon" href="{FAVICON}">
-<link rel="preload" href="{rel}assets/fonts/FamiljenGrotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{rel}assets/fonts/Newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.className+=" js"</script>
 <link rel="stylesheet" href="{rel}assets/css/site.css">
 <link rel="stylesheet" href="{rel}assets/css/layout.css">
@@ -116,6 +132,45 @@ def hero_of(p):
     for i in ims:
         if want and i["file"] == want: return i
     return ims[0]
+
+
+# ── curtain ─────────────────────────────────────────────────────────────
+# A solid field with circular apertures cut through it, the photograph behind.
+# One click grows the apertures away. Positions are a fixed pseudo-random set,
+# so the composition is stable between builds but never looks stepped.
+def _holes(n=42, seed=20260903):
+    s = seed
+    def rnd():
+        nonlocal s
+        s = (s * 1103515245 + 12345) & 0x7FFFFFFF
+        return s / 0x7FFFFFFF
+    out, placed = [], []
+    guard = 0
+    while len(out) < n and guard < 4000:
+        guard += 1
+        r = 1.8 + rnd() * 4.2
+        cx, cy = 3 + rnd() * 94, 4 + rnd() * 84
+        if any(((cx-x)**2 + (cy-y)**2) ** .5 < (r + rr + 1.4) for x, y, rr in placed):
+            continue
+        placed.append((cx, cy, r))
+        out.append('<circle cx="%.2f" cy="%.2f" r="%.2f" fill="#000"/>' % (cx, cy, r))
+    return "".join(out)
+
+def curtain(rel, photo, say):
+    return ('<div class="curtain" id="curtain" hidden>'
+            '<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'
+            '<defs><mask id="apertures" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">'
+            '<rect width="100" height="100" fill="#fff"/>'
+            '<g class="holes">' + _holes() + '</g>'
+            '</mask></defs>'
+            '<image href="' + rel + photo + '" x="0" y="0" width="100" height="100"'
+            ' preserveAspectRatio="xMidYMid slice"/>'
+            '<rect width="100" height="100" fill="#454E22" mask="url(#apertures)"/>'
+            "</svg>"
+            '<div class="curtain__ui">'
+            '<p class="curtain__say">' + e(say) + "</p>"
+            '<button class="curtain__go" type="button" id="curtain-go">See the work</button>'
+            "</div></div>")
 
 # ── spreads: authored compositions ─────────────────────────────────────
 # Each spread is a percentage canvas. "ar" is its height as a percent of its own
@@ -261,7 +316,7 @@ def spread(ar, slots, images, imhtml, capof, texts=None, eager_first=False):
             if not img: continue
             used.append(img)
             cap = capof(img)
-            fc = "<figcaption>" + e(cap) + "</figcaption>" if cap else ""
+            fc = "<figcaption>" + it(e(cap)) + "</figcaption>" if cap else ""
             out.append(el("figure", st, imhtml(img, eager_first and role == "hero", w) + fc,
                           "pl rise"))
         else:
@@ -298,16 +353,22 @@ def pack(images, imhtml, capof, seed=0):
 # ── home ────────────────────────────────────────────────────────────────
 # Authored per spread. The three current/realised projects take the anchors.
 HOME_OPEN = (64, [("stm",  0,  5, 34), ("mrk", 80,  5, 16), ("sub", 80, 23, 18),
-                  ("t0",  40,  1, 40), ("t1",  0, 56, 26), ("t2", 66, 44, 40)])
+                  ("t0",  40,  1, 38), ("t1",  0, 56, 26), ("t2", 62, 44, 36)])
 # Width range 12-48 and slots that run past the page edge on purpose: a picture
 # cropped by the page boundary is the reference's signature move.
+# Every slot stays inside 0..100. Sizes still differ hard, but no picture is
+# ever cut off by the page edge — the client asked for whole pictures.
 HOME_SPREADS = [
-  (56, [("t",  0,  8, 14), ("t", 22,  0, 30), ("t", 60, 18, 44)]),
-  (68, [("t", -4,  4, 30), ("t", 34, 30, 22), ("t", 62,  0, 22), ("t", 88, 34, 16)]),
-  (50, [("t",  8,  0, 46), ("t", 62, 22, 18), ("t", 84,  2, 14)]),
-  (60, [("t",  0, 30, 22), ("t", 28,  0, 16), ("t", 50, 14, 48)]),
-  (46, [("t", 30,  0, 12), ("t", 48, 20, 26), ("t", 80,  0, 24)]),
+  (56, [("t",  0,  8, 14), ("t", 22,  0, 30), ("t", 58, 18, 40)]),
+  (68, [("t",  0,  4, 30), ("t", 34, 30, 22), ("t", 62,  0, 22), ("t", 86, 34, 14)]),
+  (50, [("t",  8,  0, 44), ("t", 60, 22, 18), ("t", 82,  2, 14)]),
+  (60, [("t",  0, 30, 22), ("t", 28,  0, 16), ("t", 50, 14, 46)]),
+  (46, [("t", 30,  0, 12), ("t", 48, 20, 26), ("t", 78,  0, 22)]),
 ]
+
+# Foliage, not a scene. Every aperture has to land on something worth seeing,
+# and only an all-over texture reads at circle size.
+CURTAIN_PHOTO = "assets/img/_cover/01.jpg"
 
 def render_home():
     def tile(p, w_pct=26.0):
@@ -372,6 +433,7 @@ def render_home():
     return f"""{head(f"{SITE['name']} {EMD} {SITE['role']}, {SITE['location']}", SITE['meta_description'], "", f"https://{SITE['domain']}/")}
 <main class="wrap">
 {masthead("", "home")}
+ {curtain("", CURTAIN_PHOTO, SITE["curtain_say"])}
  <section class="panel page">
   {opening}
   {"".join(chr(10) + "  " + b for b in blocks)}
@@ -380,6 +442,10 @@ def render_home():
 {footer("")}"""
 
 # ── project page ────────────────────────────────────────────────────────
+# Not the index's scatter. A project opens as one main picture beside its
+# information, then runs down the page as aligned figures — reading a project
+# is a sequence, not a search. Nothing here is cropped except the opening
+# picture, which fills its half the way a full-bleed plate fills a page.
 def render_project(p, nxt):
     ims  = imgs_for(p["slug"])
     hero = hero_of(p)
@@ -388,73 +454,84 @@ def render_project(p, nxt):
     slug, T = p["slug"], p["title"]
 
     def capof(i): return caps.get(i["file"].split(".")[0])
-    def imhtml(i, eager=False, w_pct=30.0):
+    def im(i, eager=False, w_pct=50.0):
         cap = capof(i)
-        alt = T + " \u2014 " + (cap if cap else "project drawing")
+        alt = T + " " + EMD + " " + (cap if cap else "project drawing")
         return picture(slug, i, "../../", alt, w_pct, eager)
+    def fig(i, cls, w_pct):
+        cap = capof(i)
+        fc = "<figcaption>" + it(e(cap)) + "</figcaption>" if cap else ""
+        return '<figure class="' + cls + ' rise">' + im(i, False, w_pct) + fc + "</figure>"
 
-    facts = "".join('<div class="frow"><dt>' + e(k) + "</dt><dd>" + e(v) + "</dd></div>"
-                    for k, v in p["meta"])
-    paras = [e(t) for t in p["body"]]
-    half = (len(paras) + 1) // 2
-    note = ('<p class="blk blk--soft blk--fine" style="margin-top:1rem">'
+    paras = list(p["body"])
+    lead_para = paras.pop(0) if paras else ""
+    note = ('<p class="blk blk--fine blk--soft" style="margin-top:1rem">'
             + e(p["draft_note"]) + "</p>") if p.get("draft_note") else ""
 
-    # opening
-    ar, slots = OPEN
-    otexts = {
-      "ttl": '<a class="back" href="../../">' + ARROW_BACK + "<span>All work</span></a>"
-             '<h1 class="ptitle">' + e(T) + "</h1>"
-             '<p class="pwhere"><span>' + e(p["place"]) + "</span><span>"
-             + e(p["years"]) + "</span></p>",
-      "led": '<p class="plead">' + e(p["lead"]) + "</p>",
-    }
-    heroes = [hero] if hero else []
-    o_out = []
-    o_assign = 0
-    small = rest[:2]
-    for role, l, t, w in slots:
-        st = box(l, t, w)
-        if role == "hero":
-            if hero:
-                cap = capof(hero)
-                fc = "<figcaption>" + e(cap) + "</figcaption>" if cap else ""
-                o_out.append(el("figure", st, imhtml(hero, True, w) + fc, "pl rise"))
-        elif role == "img":
-            if o_assign < len(small):
-                i2 = small[o_assign]; o_assign += 1
-                cap = capof(i2)
-                fc = "<figcaption>" + e(cap) + "</figcaption>" if cap else ""
-                o_out.append(el("figure", st, imhtml(i2, False, w) + fc, "pl rise"))
+    # ── opening: picture left, information right ──
+    inset = rest.pop(0) if rest else None
+    inset_html = ""
+    if inset:
+        cap = capof(inset)
+        fc = "<figcaption>" + it(e(cap)) + "</figcaption>" if cap else ""
+        inset_html = ('<figure class="split__inset">' + im(inset, False, 29) + fc + "</figure>")
+    hero_html = ""
+    if hero:
+        hero_html = '<div class="split__img">' + im(hero, True, 50) + "</div>"
+
+    opening = ('<section class="split">' + hero_html
+        + '<div class="split__info">'
+        + '<p class="pkicker">' + e(p["place"]) + " &middot; " + e(p["years"]) + "</p>"
+        + '<h1 class="ptitle">' + e(T) + "</h1>"
+        + '<p class="plead">' + it(e(p["lead"])) + "</p>"
+        + inset_html
+        + '<div class="split__tail"><div class="blk">' + "<p>" + it(e(lead_para)) + "</p></div></div>"
+        + "</div></section>")
+
+    # ── the run: figures in a legible sequence, prose interleaved ──
+    blocks, i, flip, used_text = [], 0, False, 0
+    while i < len(rest):
+        a = rest[i]
+        ar = a["w"] / a["h"]
+        nx = rest[i + 1] if i + 1 < len(rest) else None
+        if paras and used_text < len(paras) and i % 2 == 1:
+            side = " withtext--flip" if flip else ""
+            blocks.append('<div class="withtext' + side + '">'
+                          + fig(a, "fig", 58)
+                          + '<div class="blk">' + "<p>" + it(e(paras[used_text])) + "</p>"
+                          + (note if used_text == len(paras) - 1 else "") + "</div></div>")
+            used_text += 1
+        elif ar >= 2.2:
+            blocks.append(fig(a, "fig", 92))
+        elif ar >= 1.5:
+            blocks.append(fig(a, "fig fig--w66" + (" fig--right" if flip else ""), 60))
+        elif nx and (nx["w"] / nx["h"]) < 1.5:
+            blocks.append('<div class="pair">' + fig(a, "fig", 44) + fig(nx, "fig", 44) + "</div>")
+            i += 1
         else:
-            if otexts.get(role):
-                o_out.append(el("div", st, otexts[role], "rise"))
-    opening = ('<div class="spread" style="--arn:' + str(ar) + '">\n   '
-               + "\n   ".join(o_out) + "\n  </div>")
+            blocks.append(fig(a, "fig fig--w50" + (" fig--right" if flip else ""), 45))
+        flip = not flip
+        i += 1
 
-    # words
-    war, wslots = WORDS
-    remaining = rest[o_assign:]
-    wtexts = {
-      "bd1": '<div class="blk">' + "".join("<p>" + t + "</p>" for t in paras[:half]) + "</div>",
-      "bd2": '<div class="blk">' + "".join("<p>" + t + "</p>" for t in paras[half:]) + note + "</div>",
-      "fct": '<dl class="facts">' + facts + "</dl>",
-    }
-    wpics = remaining[:2]
-    words_html, used = spread(war, wslots, wpics, imhtml, capof, wtexts)
-    remaining = remaining[len(wpics):]
+    while used_text < len(paras):
+        blocks.append('<div class="blk rise">' + "<p>" + it(e(paras[used_text])) + "</p>"
+                      + (note if used_text == len(paras) - 1 else "") + "</div>")
+        used_text += 1
+    if not paras and note:
+        blocks.append('<div class="blk rise">' + note + "</div>")
 
-    plates = pack(remaining, imhtml, capof, seed=len(T) % 3) if remaining else ""
+    facts = "".join('<div class="frow"><dt>' + e(k) + "</dt><dd>" + it(e(v)) + "</dd></div>"
+                    for k, v in p["meta"])
+    blocks.append('<dl class="facts rise">' + facts + "</dl>")
+    run = '<section class="run">' + "".join(blocks) + "</section>"
 
     return f"""{head(f"{p['title']} {EMD} {SITE['name']}", p['lead'], "../../", f"https://{SITE['domain']}/work/{p['slug']}/")}
 <main class="wrap">
 {masthead("../../")}
  <article>
-  <section class="panel page">
+  <p style="margin:0 0 var(--gut)"><a class="back back--onground" href="../../">{ARROW_BACK}<span>All work</span></a></p>
   {opening}
-  {words_html}
-  {plates}
-  </section>
+  {run}
   <a class="next panel panel--flush" href="../{nxt['slug']}/">
    <span>
     <span class="label">Next project</span>
@@ -467,7 +544,41 @@ def render_project(p, nxt):
 {footer("../../")}"""
 
 # ── static extras ───────────────────────────────────────────────────────
-JS = """document.querySelectorAll('.js-mail').forEach(function(a){
+JS = """// ── curtain ───────────────────────────────────────────────────────────
+// The home opens behind a solid field with apertures cut through it. Click
+// anywhere (or the button, or Escape) and the apertures grow away. Shown once
+// per session: coming back from a project should not replay it.
+(function(){
+  var c = document.getElementById('curtain');
+  if (!c) return;
+  var seen = false;
+  try { seen = sessionStorage.getItem('yp-seen') === '1'; } catch (e) {}
+  // capture hooks skip the curtain so a full-page screenshot shows the index
+  if (seen || /[?&](eager|nocurtain)/.test(location.search)) { c.remove(); return; }
+
+  c.hidden = false;
+  document.body.classList.add('curtain-up');
+  var quick = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function open(){
+    if (c.dataset.going) return;
+    c.dataset.going = '1';
+    try { sessionStorage.setItem('yp-seen', '1'); } catch (e) {}
+    document.body.classList.remove('curtain-up');
+    if (quick) { c.remove(); return; }
+    c.classList.add('opening');
+    setTimeout(function(){ c.classList.add('gone'); }, 780);
+    setTimeout(function(){ c.remove(); }, 1750);
+  }
+  c.addEventListener('click', open);
+  addEventListener('keydown', function(ev){
+    if (ev.key === 'Escape' || ev.key === 'Enter' || ev.key === ' ') open();
+  });
+  var go = document.getElementById('curtain-go');
+  if (go) { go.focus({ preventScroll: true }); }
+})();
+
+document.querySelectorAll('.js-mail').forEach(function(a){
   var addr = a.dataset.u + '@' + a.dataset.d;
   a.href = 'mailto:' + addr;
   var t = a.querySelector('.js-mail-txt');
@@ -551,15 +662,17 @@ setTimeout(rescueImages, 1200);
 setTimeout(rescueImages, 3500);
 """
 
-NOT_FOUND = f"""{head(f"Not found — {SITE['name']}", "That page does not exist.", "", f"https://{SITE['domain']}/404.html")}
+NOT_FOUND = f"""{head(f"Not found {EMD} {SITE['name']}", "That page does not exist.", "", f"https://{SITE['domain']}/404.html")}
 <main class="wrap">
 {masthead("")}
- <section class="panel panel--flush">
-  <div class="hero">
-   {mark("mark", 5)}
-   <h1>That page isn&rsquo;t here.</h1>
-   <p class="sub">The link may be old, or the address mistyped.</p>
-   <p style="margin-top:2rem"><a class="back" href="/">{ARROW_BACK}<span>All work</span></a></p>
+ <section class="panel page">
+  <div class="spread" style="--arn:34">
+   <div style="--l:0%;--t:12%;--w:46%">
+    {mark("mark mark--cell", 5)}
+    <h1 class="statement" style="margin-top:1.6rem">That page isn&rsquo;t here.</h1>
+    <p class="blk blk--soft" style="margin-top:1.2rem">The link may be old, or the address mistyped.</p>
+    <p style="margin-top:2rem"><a class="back" href="/">{ARROW_BACK}<span>All work</span></a></p>
+   </div>
   </div>
  </section>
 </main>

@@ -7,16 +7,26 @@ Mode: **Experience.** The work leads; the interface recedes.
 **World** (client-pinned, Atelier Rhizome): a deep olive field with bone panels
 floating on it, small quiet sans, hand-drawn botanical marks.
 
-**Structure** (client-locked, dealt as concept 2 of 7 — *scattered photo-book*):
-the panel is a **page**, not a column. Pictures are placed on it at deliberately
+**Structure.** Three layouts, each with one job:
+
+- **Curtain** — the home opens on the olive field with circular apertures cut
+  through it onto foliage. One click grows them away. Shown once per session.
+- **Index** (client-locked, concept 2 of 7 — *scattered photo-book*):
+  the panel is a **page**, not a column. Pictures are placed on it at deliberately
 unequal sizes — a 2-column thumbnail beside a half-page anchor — at large
 vertical offsets, some cropped by the page edge. Text appears as small blocks
 dropped into the empty space, never as a caption strip under a picture. Well
 over half of every page is empty, and that emptiness is the composition.
 
+- **Project** — *not* the index's scatter. One main picture beside its
+  information, then the page runs down as aligned figures. Reading a project is
+  a sequence, not a search.
+
 Explicitly rejected on the way here: the uniform thumbnail grid with one
-full-width picture per row. It is the category default and the client refused it
-by name.
+full-width picture per row (the category default, refused by name), and edge
+bleeds — pictures cropped by the page boundary. The client wants whole
+pictures, so the only crop left on the site is the opening picture of a
+project, which fills its half the way a full-bleed plate fills a page.
 
 ## How the page is actually built
 
@@ -54,13 +64,22 @@ Secondary text is tinted from the olive hue in both directions. No greys.
 
 ## Type
 
-**Familjen Grotesk**, self-hosted variable (400–700), latin + latin-ext + italic,
-54 KB total. One family; hierarchy comes from size, weight and tracking.
+Serif-led, from the client's type reference: a transitional serif carrying
+everything you read, with italic as an inline accent.
 
-Instrument Sans was the first choice and was replaced: the design detector flags
-it as one of the faces every AI-generated interface converges on, and this site
-cannot afford to look generated. Familjen Grotesk has real character in the a, g
-and R while staying quiet at 11 px.
+- **Newsreader** (self-hosted variable 300–700 + italic) — statement, project
+  titles, leads, body, captions, facts. 365 KB.
+- **Familjen Grotesk** (400–700) — 11 px uppercase labels only, where a serif
+  stops being legible. 34 KB.
+
+Instrument Sans was the first choice and was dropped: the detector flags it as
+one of the faces every AI-generated interface converges on.
+
+**Foreign terms take italic.** Dutch words inside English prose — *speelplaats*,
+*plankaart*, *Definitief Ontwerp*, *Stadsingenieurs* — are italicised by
+`it()` in build.py. It is the ordinary typographic convention, and it produces
+the reference's roman/italic texture honestly rather than by decorating random
+words. Place names stay roman.
 
 - Project title: `clamp(1.9rem, 4.4vw, 3.4rem)`, 500, tracking `-.032em`
 - Statement: `clamp(1.5rem, 2.9vw, 2.35rem)`, 400

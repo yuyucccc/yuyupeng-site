@@ -1,3 +1,37 @@
+// ── curtain ───────────────────────────────────────────────────────────
+// The home opens behind a solid field with apertures cut through it. Click
+// anywhere (or the button, or Escape) and the apertures grow away. Shown once
+// per session: coming back from a project should not replay it.
+(function(){
+  var c = document.getElementById('curtain');
+  if (!c) return;
+  var seen = false;
+  try { seen = sessionStorage.getItem('yp-seen') === '1'; } catch (e) {}
+  // capture hooks skip the curtain so a full-page screenshot shows the index
+  if (seen || /[?&](eager|nocurtain)/.test(location.search)) { c.remove(); return; }
+
+  c.hidden = false;
+  document.body.classList.add('curtain-up');
+  var quick = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function open(){
+    if (c.dataset.going) return;
+    c.dataset.going = '1';
+    try { sessionStorage.setItem('yp-seen', '1'); } catch (e) {}
+    document.body.classList.remove('curtain-up');
+    if (quick) { c.remove(); return; }
+    c.classList.add('opening');
+    setTimeout(function(){ c.classList.add('gone'); }, 780);
+    setTimeout(function(){ c.remove(); }, 1750);
+  }
+  c.addEventListener('click', open);
+  addEventListener('keydown', function(ev){
+    if (ev.key === 'Escape' || ev.key === 'Enter' || ev.key === ' ') open();
+  });
+  var go = document.getElementById('curtain-go');
+  if (go) { go.focus({ preventScroll: true }); }
+})();
+
 document.querySelectorAll('.js-mail').forEach(function(a){
   var addr = a.dataset.u + '@' + a.dataset.d;
   a.href = 'mailto:' + addr;

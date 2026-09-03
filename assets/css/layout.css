@@ -1,19 +1,59 @@
 /* ─────────────────────────────────────────────────────────────────────
-   SPREAD — the scattered photo-book page.
+   Three layouts, each with its own job.
 
-   Each spread is a percentage canvas: --ar sets its height from its own
-   width, and everything inside is absolutely positioned at an authored
-   left / top / width in percent. Pictures keep their aspect, so the whole
-   composition scales with the viewport with no breakpoints in between.
-
-   Grid auto-placement cannot do this. An item starting at column 1 after
-   an item at column 9 gets pushed to a new row, so pictures could never
-   truly interleave or hang off the page edge.
-
-   Below 60rem it collapses to ordinary flow. A phone has no room to
-   scatter, and faking it only makes every picture tiny.
+   CURTAIN  the home opens on a solid field with circular apertures cut
+            through it. One click grows the apertures away and the index
+            arrives. Without JS the curtain never renders.
+   SCATTER  the index: pictures at deliberately unequal sizes on a page
+            of mostly empty space. Never cropped — a slot is only ever a
+            width, and the picture keeps its own proportion.
+   SPLIT    a project opens as one main picture beside its information,
+            then runs down the page as aligned figures. Not scattered:
+            reading a project is a sequence, not a search.
    ──────────────────────────────────────────────────────────────────── */
 
+/* ── curtain ──────────────────────────────────────── */
+.curtain{display:none}
+.js .curtain{
+  display:block;position:fixed;inset:0;z-index:60;
+  background:var(--ground);cursor:pointer;
+  transition:opacity .9s var(--ease);
+}
+.curtain svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.curtain .holes{
+  transform-box:view-box;transform-origin:50% 50%;
+  transition:transform 1.15s var(--ease);
+}
+.curtain__ui{
+  position:absolute;inset:auto 0 clamp(2.5rem,7vh,5.5rem);
+  display:flex;flex-direction:column;align-items:center;gap:1.4rem;
+  padding:0 1.5rem;text-align:center;
+  transition:opacity .5s var(--ease);
+}
+.curtain__say{
+  margin:0;max-width:34ch;
+  font-size:clamp(.9375rem,1.5vw,1.1rem);line-height:1.5;
+  color:var(--on-ground);
+}
+.curtain__go{
+  appearance:none;border:1px solid var(--rule-on-ground);background:none;
+  color:var(--on-ground);font:inherit;
+  font-size:.6875rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  padding:.85rem 1.9rem;border-radius:999px;cursor:pointer;
+  transition:background .35s var(--ease),border-color .35s var(--ease);
+}
+.curtain__go:hover{background:rgba(232,230,220,.12);border-color:var(--on-ground-soft)}
+
+.curtain.opening .holes{transform:scale(17)}
+.curtain.opening .curtain__ui{opacity:0}
+.curtain.gone{opacity:0;pointer-events:none}
+body.curtain-up{overflow:hidden}
+
+@media(prefers-reduced-motion:reduce){
+  .js .curtain,.curtain .holes,.curtain__ui{transition:none}
+}
+
+/* ── scatter (the index) ──────────────────────────── */
 .spread{
   display:flex;flex-direction:column;
   gap:clamp(2.25rem,7vw,3.25rem);
@@ -30,82 +70,110 @@
     aspect-ratio:100 / var(--arn,60);
     padding:0;margin:0;
   }
-  .spread > *{
-    position:absolute;
-    left:var(--l,0);
-    top:var(--t,0);
-    width:var(--w,20%);
-  }
-  /* the page's own margin, so slots can be authored edge to edge */
+  .spread > *{position:absolute;left:var(--l,0);top:var(--t,0);width:var(--w,20%)}
   .page{padding:clamp(2rem,3.4vw,3.75rem)}
   .page > .spread + .spread{margin-top:clamp(.5rem,1.4vw,1.75rem)}
-  /* a slot may run past the page edge; the page crops it, exactly as a
-     photo-book page crops a picture that runs into the gutter */
-  .page{overflow:hidden}
 }
 
-/* plates ------------------------------------------------------------ */
-.pl img{width:100%;height:auto;display:block}
-.pl figcaption{
-  margin-top:.55rem;font-size:.6875rem;line-height:1.5;
-  color:var(--ink-soft);font-style:italic;
-}
-
-/* text dropped into the empty space — a margin note, not a column ---- */
-.blk{font-size:.8125rem;line-height:1.66;color:var(--ink)}
-.blk p{margin:0 0 .95em}
-.blk p:last-child{margin-bottom:0}
-.blk--soft{color:var(--ink-soft)}
-.blk--fine{font-size:.75rem;line-height:1.6}
-
-.facts{margin:0;font-size:.8125rem;line-height:1.5}
-.facts .frow{margin-bottom:.8rem}
-.facts dt{
-  font-size:.6875rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--ink-soft);margin:0 0 .15rem;
-}
-.facts dd{margin:0;color:var(--ink)}
-
-/* project opening --------------------------------------------------- */
-.ptitle{
-  font-size:clamp(1.9rem,4.4vw,3.4rem);font-weight:500;
-  letter-spacing:-.032em;line-height:1.03;margin:.7rem 0 0;text-wrap:balance;
-}
-.pwhere{
-  margin:.7rem 0 0;font-size:.8125rem;color:var(--ink-soft);
-  display:flex;gap:.5rem;flex-wrap:wrap;
-}
-.pwhere span+span::before{content:"·";margin-right:.5rem;color:var(--rule)}
-.plead{
-  margin:0;font-size:clamp(1rem,1.35vw,1.2rem);line-height:1.5;
-  letter-spacing:-.01em;text-wrap:pretty;
-}
-
-/* index tiles ------------------------------------------------------- */
+/* index tiles — always the whole picture, never a crop */
 .tile{display:block;text-decoration:none;color:inherit}
 .tile img{
   width:100%;height:auto;display:block;
   transition:opacity .55s var(--ease),transform .8s var(--ease);
 }
 .tile__t{
-  display:block;margin-top:.55rem;font-size:.8125rem;font-weight:500;
-  letter-spacing:-.006em;line-height:1.3;
+  display:block;margin-top:.55rem;font-size:1rem;font-weight:400;
+  letter-spacing:-.004em;line-height:1.28;
 }
 .tile__m{display:block;margin-top:.15rem;font-size:.6875rem;color:var(--ink-soft)}
 .tile:hover img{opacity:.8;transform:scale(1.014)}
 .tile:hover .tile__t{color:var(--moss-text)}
 .tile:focus-visible{outline:2px solid var(--moss-lift);outline-offset:6px}
 
-/* home statement — one element in the scatter, not a banner ---------- */
 .statement{
-  font-size:clamp(1.5rem,2.9vw,2.35rem);font-weight:400;line-height:1.24;
-  letter-spacing:-.021em;margin:0;text-wrap:pretty;
+  font-size:clamp(1.55rem,3.05vw,2.5rem);font-weight:400;line-height:1.22;
+  letter-spacing:-.012em;margin:0;text-wrap:pretty;
 }
 .statement em{font-style:italic;color:var(--moss-text)}
-
 .mark--cell{width:100%;height:auto;color:var(--moss);display:block}
 
-/* section rail ------------------------------------------------------ */
+/* ── split (a project opens here) ─────────────────── */
+.split{display:block;background:var(--panel)}
+.split__img{margin:0}
+.split__img img{width:100%;height:auto;display:block}
+.split__info{padding:clamp(1.75rem,5vw,3.25rem)}
+
+@media(min-width:64rem){
+  .split{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}
+  /* The one intentional crop on the site: the opening picture fills its half
+     the way a full-bleed plate fills a page. Every other picture is whole. */
+  .split__img{height:100%;overflow:hidden}
+  .split__img img{height:100%;object-fit:cover}
+  .split__info{display:flex;flex-direction:column;padding:clamp(2.5rem,3.6vw,4rem)}
+}
+
+.pkicker{
+  margin:0 0 1.4rem;font-size:.6875rem;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-soft);
+}
+.ptitle{
+  font-size:clamp(1.9rem,3.7vw,3.2rem);font-weight:400;
+  letter-spacing:-.018em;line-height:1.05;margin:0;text-wrap:balance;
+}
+.plead{
+  margin:1.1rem 0 0;font-size:clamp(1rem,1.3vw,1.2rem);line-height:1.5;
+  letter-spacing:-.01em;color:var(--ink-soft);text-wrap:pretty;
+}
+.split__inset{margin:clamp(1.75rem,3vw,2.5rem) 0 0;max-width:58%}
+.split__inset img{width:100%;height:auto}
+.split__inset figcaption{
+  margin-top:.5rem;font-size:.8125rem;line-height:1.5;
+  color:var(--ink-soft);font-style:italic;
+}
+.split__tail{margin-top:auto;padding-top:clamp(1.75rem,3vw,2.75rem)}
+
+/* ── run (everything after the opening) ───────────── */
+.run{background:var(--panel);padding:clamp(1.75rem,4vw,4.5rem) clamp(1rem,4vw,4.5rem)}
+.run > * + *{margin-top:clamp(2.5rem,5vw,5.5rem)}
+
+.fig{margin:0}
+.fig img{width:100%;height:auto;display:block}
+.fig figcaption{
+  margin-top:.6rem;font-size:.8125rem;line-height:1.5;
+  color:var(--ink-soft);font-style:italic;
+}
+.fig--w66{max-width:66%}
+.fig--w50{max-width:50%}
+.fig--w40{max-width:40%}
+.fig--right{margin-left:auto}
+
+.pair{display:grid;gap:clamp(1rem,2vw,1.75rem);grid-template-columns:1fr}
+@media(min-width:48rem){.pair{grid-template-columns:1fr 1fr;align-items:start}}
+
+.withtext{display:grid;gap:clamp(1.5rem,3vw,2.75rem);grid-template-columns:1fr}
+@media(min-width:56rem){
+  .withtext{grid-template-columns:1.6fr 1fr;align-items:start}
+  .withtext--flip > .fig{order:2}
+}
+
+.blk{font-size:1rem;line-height:1.66;color:var(--ink);max-width:64ch}
+.blk p{margin:0 0 1em}
+.blk p:last-child{margin-bottom:0}
+.blk--soft{color:var(--ink-soft)}
+.blk--fine{font-size:.8125rem;line-height:1.6}
+
+.facts{
+  margin:0;display:grid;gap:1.1rem clamp(1.5rem,3vw,2.5rem);
+  grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
+  border-top:1px solid var(--rule);padding-top:clamp(1.5rem,3vw,2rem);
+}
+.facts .frow{margin:0}
+.facts dt{
+  font-size:.6875rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);margin:0 0 .2rem;
+}
+.facts dd{margin:0;font-size:1rem;line-height:1.45}
+
 .srail{
   display:flex;justify-content:space-between;align-items:baseline;
   border-top:1px solid var(--rule);padding-top:.6rem;
