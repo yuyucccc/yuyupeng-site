@@ -22,11 +22,26 @@
         "Almost everything that could be reused was reused — the paving bricks, the seating edges stacked from existing concrete tiles, and half of the play equipment, relocated rather than replaced."
       ],
       "meta": [
-        ["Assignment", "Speelplaats"],
-        ["Firm", "Gemeente Utrecht"],
-        ["Design", "2024–2025"],
-        ["Status", "Realised"],
-        ["Team", "Stadsingenieurs, Ruimte"]
+        [
+          "Assignment",
+          "Speelplaats"
+        ],
+        [
+          "Firm",
+          "Gemeente Utrecht"
+        ],
+        [
+          "Design",
+          "2024–2025"
+        ],
+        [
+          "Status",
+          "Realised"
+        ],
+        [
+          "Team",
+          "Stadsingenieurs, Ruimte"
+        ]
       ],
       "captions": {
         "01": "De Kameleon after completion, spring 2026",
@@ -47,18 +62,34 @@
         "Within an integrated design team — green, traffic, landscape, cables and pipes, soil, water and sustainability — we work on the streets and the courtyards between the blocks: continuous cycle routes, room for trees above ground and below it, and rainwater kept in the district."
       ],
       "meta": [
-        ["Assignment", "Openbare ruimte"],
-        ["Firm", "Gemeente Utrecht"],
-        ["Design", "2025–ongoing"],
-        ["Status", "SO / VO"],
-        ["Team", "Stadsingenieurs, Ruimte"]
+        [
+          "Assignment",
+          "Openbare ruimte"
+        ],
+        [
+          "Firm",
+          "Gemeente Utrecht"
+        ],
+        [
+          "Design",
+          "2025–ongoing"
+        ],
+        [
+          "Status",
+          "SO / VO"
+        ],
+        [
+          "Team",
+          "Stadsingenieurs, Ruimte"
+        ]
       ],
       "captions": {
         "01": "Groenstructuur Kanaleneiland — analysis",
         "02": "Stanleylaan — existing situation",
         "03": "Stanleylaan — new impression",
         "07": "Afrikalaan e.o. — VO plankaart"
-      }
+      },
+      "hero": "02.jpg"
     },
     {
       "slug": "van-eysingalaan",
@@ -73,11 +104,26 @@
         "Seating poufs and bins are spread across the site — the two things residents asked for most. Almost all of the material, from the benches to the cobble strips, comes back out of the municipal depot."
       ],
       "meta": [
-        ["Assignment", "Sport- en speelplek"],
-        ["Firm", "Gemeente Utrecht"],
-        ["Design", "2025"],
-        ["Status", "Realised"],
-        ["Team", "Stadsingenieurs, Ruimte"]
+        [
+          "Assignment",
+          "Sport- en speelplek"
+        ],
+        [
+          "Firm",
+          "Gemeente Utrecht"
+        ],
+        [
+          "Design",
+          "2025"
+        ],
+        [
+          "Status",
+          "Realised"
+        ],
+        [
+          "Team",
+          "Stadsingenieurs, Ruimte"
+        ]
       ],
       "captions": {
         "01": "Blokplek Van Eysingalaan after completion",
@@ -98,12 +144,30 @@
         "The deck currently gives water almost no space, so peak rainfall causes waterlogging while the elevated landscape dries out. Buffering water becomes the organising principle — a river landscape used as the framework for the whole centre."
       ],
       "meta": [
-        ["Assignment", "Visie"],
-        ["Firm", "Buro Sant en Co"],
-        ["Design", "2022–ongoing"],
-        ["Status", "Tender / VO"],
-        ["Collaborations", "Gemeente Nieuwegein"],
-        ["Team", "Paul Plambeck, Merel Cozlijsen, Ran Yan"]
+        [
+          "Assignment",
+          "Visie"
+        ],
+        [
+          "Firm",
+          "Buro Sant en Co"
+        ],
+        [
+          "Design",
+          "2022–ongoing"
+        ],
+        [
+          "Status",
+          "Tender / VO"
+        ],
+        [
+          "Collaborations",
+          "Gemeente Nieuwegein"
+        ],
+        [
+          "Team",
+          "Paul Plambeck, Merel Cozlijsen, Ran Yan"
+        ]
       ],
       "captions": {
         "01": "City within a village",
@@ -123,17 +187,36 @@
         "The design also works on continuity of experience: the red brick from the Puccini handbook is pulled in from street level, through the building and across the stairs to the meeting garden, gradually transforming into a carpet of varying brick shades."
       ],
       "meta": [
-        ["Assignment", "Public space"],
-        ["Firm", "Buro Sant en Co"],
-        ["Design", "2021–ongoing"],
-        ["Status", "SO / VO"],
-        ["Collaborations", "Gemeente Amsterdam"],
-        ["Team", "Sander Singor, Purvika Awasthi"]
+        [
+          "Assignment",
+          "Public space"
+        ],
+        [
+          "Firm",
+          "Buro Sant en Co"
+        ],
+        [
+          "Design",
+          "2021–ongoing"
+        ],
+        [
+          "Status",
+          "SO / VO"
+        ],
+        [
+          "Collaborations",
+          "Gemeente Amsterdam"
+        ],
+        [
+          "Team",
+          "Sander Singor, Purvika Awasthi"
+        ]
       ],
       "captions": {
         "06": "Groene schakel",
         "07": "Optimaal verbonden sport en spel"
-      }
+      },
+      "hero": "06.jpg"
     },
     {
       "slug": "parkstraat",
@@ -148,12 +231,30 @@
         "Emphasis is on greening and distinctiveness, to avoid uniformity with other cities: a sense of place that reflects Apeldoorn's own landscape and royal history. Because its functions keep changing, the street needs a flexible design — a robust structure with a prominent promenade that can be adjusted over time."
       ],
       "meta": [
-        ["Assignment", "Public space"],
-        ["Firm", "Buro Sant en Co"],
-        ["Design", "2022–ongoing"],
-        ["Status", "Tender / VO"],
-        ["Collaborations", "Gemeente Apeldoorn"],
-        ["Team", "Paul Plambeck, Merel Cozlijsen"]
+        [
+          "Assignment",
+          "Public space"
+        ],
+        [
+          "Firm",
+          "Buro Sant en Co"
+        ],
+        [
+          "Design",
+          "2022–ongoing"
+        ],
+        [
+          "Status",
+          "Tender / VO"
+        ],
+        [
+          "Collaborations",
+          "Gemeente Apeldoorn"
+        ],
+        [
+          "Team",
+          "Paul Plambeck, Merel Cozlijsen"
+        ]
       ],
       "captions": {
         "02": "The spatial structure of Parkstraat Zuid",
@@ -173,12 +274,30 @@
         "Further into the project, the collective woodland and the municipal park come together to define the destination — nature and community merged into a single haven in the centre of Soest."
       ],
       "meta": [
-        ["Assignment", "Stedenbouw"],
-        ["Firm", "Buro Sant en Co"],
-        ["Design", "2023"],
-        ["Status", "Tender"],
-        ["Collaborations", "AM, Gemeente Soest"],
-        ["Team", "Paul Plambeck, Merel Cozlijsen"]
+        [
+          "Assignment",
+          "Stedenbouw"
+        ],
+        [
+          "Firm",
+          "Buro Sant en Co"
+        ],
+        [
+          "Design",
+          "2023"
+        ],
+        [
+          "Status",
+          "Tender"
+        ],
+        [
+          "Collaborations",
+          "AM, Gemeente Soest"
+        ],
+        [
+          "Team",
+          "Paul Plambeck, Merel Cozlijsen"
+        ]
       ],
       "captions": {}
     },
@@ -195,12 +314,30 @@
         "Set against a natural backdrop, the building and its surroundings gain a setting for a range of activities — including the unusual opportunity to play sport inside a continuous forest-like environment."
       ],
       "meta": [
-        ["Assignment", "Stedenbouw & public space"],
-        ["Firm", "Buro Sant en Co"],
-        ["Design", "2023"],
-        ["Status", "Tender"],
-        ["Collaborations", "AM, Henning Larsen, cepezed"],
-        ["Team", "Paul Plambeck, Merel Cozlijsen"]
+        [
+          "Assignment",
+          "Stedenbouw & public space"
+        ],
+        [
+          "Firm",
+          "Buro Sant en Co"
+        ],
+        [
+          "Design",
+          "2023"
+        ],
+        [
+          "Status",
+          "Tender"
+        ],
+        [
+          "Collaborations",
+          "AM, Henning Larsen, cepezed"
+        ],
+        [
+          "Team",
+          "Paul Plambeck, Merel Cozlijsen"
+        ]
       ],
       "captions": {}
     },
@@ -217,12 +354,30 @@
         "The precise mix of vegetation in the inner garden creates a nectar source for insects and butterflies. Song thrushes, blackbirds and goldfinches forage among the low vegetation and nest in native trees, with berry-laden shrubs as an extra food source."
       ],
       "meta": [
-        ["Assignment", "Daktuin"],
-        ["Firm", "Buro Sant en Co"],
-        ["Design", "2023"],
-        ["Status", "Tender"],
-        ["Collaborations", "WAA-TSA, Stadsnatuur, cepezed"],
-        ["Team", "Sander Singor, Coos van Ginkel, Darina Awasthi"]
+        [
+          "Assignment",
+          "Daktuin"
+        ],
+        [
+          "Firm",
+          "Buro Sant en Co"
+        ],
+        [
+          "Design",
+          "2023"
+        ],
+        [
+          "Status",
+          "Tender"
+        ],
+        [
+          "Collaborations",
+          "WAA-TSA, Stadsnatuur, cepezed"
+        ],
+        [
+          "Team",
+          "Sander Singor, Coos van Ginkel, Darina Awasthi"
+        ]
       ],
       "captions": {}
     },
@@ -239,12 +394,30 @@
         "Its functions are no longer separated from one another but placed in a single integral landscape — organised and unorganised sport meeting in the same place. The park is designed with the input of future users and residents, building a shared sense of pride and of responsibility for it."
       ],
       "meta": [
-        ["Assignment", "Roof park"],
-        ["Firm", "Buro Sant en Co"],
-        ["Design", "2021–ongoing"],
-        ["Status", "SO–DO"],
-        ["Collaborations", "cepezed"],
-        ["Team", "Sander Singor, Nina de Munnik"]
+        [
+          "Assignment",
+          "Roof park"
+        ],
+        [
+          "Firm",
+          "Buro Sant en Co"
+        ],
+        [
+          "Design",
+          "2021–ongoing"
+        ],
+        [
+          "Status",
+          "SO–DO"
+        ],
+        [
+          "Collaborations",
+          "cepezed"
+        ],
+        [
+          "Team",
+          "Sander Singor, Nina de Munnik"
+        ]
       ],
       "captions": {
         "05": "Section — kidzone",
@@ -264,12 +437,30 @@
         "Its flowing lines and concealed lighting create an atmosphere in which aesthetics and function are indistinguishable. The design turns the roof into a coherent, immersive space where every element has a job to do."
       ],
       "meta": [
-        ["Assignment", "Roofgarden"],
-        ["Firm", "Buro Sant en Co"],
-        ["Design", "2021"],
-        ["Status", "TO"],
-        ["Collaborations", "rots-maatwerk"],
-        ["Team", "Paul Plambeck, Jie Yang"]
+        [
+          "Assignment",
+          "Roofgarden"
+        ],
+        [
+          "Firm",
+          "Buro Sant en Co"
+        ],
+        [
+          "Design",
+          "2021"
+        ],
+        [
+          "Status",
+          "TO"
+        ],
+        [
+          "Collaborations",
+          "rots-maatwerk"
+        ],
+        [
+          "Team",
+          "Paul Plambeck, Jie Yang"
+        ]
       ],
       "captions": {}
     },
@@ -286,10 +477,22 @@
         "A series of ecological restoration measures becomes a series of places where people meet the process directly. The cycle of natural materials is combined with daily life and recreation — production is the landscape."
       ],
       "meta": [
-        ["Date", "2017"],
-        ["Type", "Academic work"],
-        ["Supervisor", "Wei Xuerao"],
-        ["Collaborations", "Xie Zhuohan"]
+        [
+          "Date",
+          "2017"
+        ],
+        [
+          "Type",
+          "Academic work"
+        ],
+        [
+          "Supervisor",
+          "Wei Xuerao"
+        ],
+        [
+          "Collaborations",
+          "Xie Zhuohan"
+        ]
       ],
       "captions": {
         "02": "Site analysis — existing water system",
@@ -308,9 +511,18 @@
         "The drawings test a sequence of ground conditions — from permanently wet to rarely flooded — and the vegetation and access each of them can carry."
       ],
       "meta": [
-        ["Date", "2018"],
-        ["Type", "Academic work"],
-        ["Supervisor", "Inge Bobbink"]
+        [
+          "Date",
+          "2018"
+        ],
+        [
+          "Type",
+          "Academic work"
+        ],
+        [
+          "Supervisor",
+          "Inge Bobbink"
+        ]
       ],
       "captions": {},
       "draft_note": "本项目原 PDF 里没有正文，这段是我根据图纸和副标题写的草稿"
@@ -327,10 +539,22 @@
         "Based on the arcade, the basic form is disassembled and reassembled: changes in height are tied to the flood levels, producing a rich variety of conditions that adapt to different activities and echo the existing structure of the square."
       ],
       "meta": [
-        ["Date", "2016"],
-        ["Type", "Academic work"],
-        ["Supervisor", "Albertus Wang, Francesco Cappellari"],
-        ["Award", "2nd Prize, Overseas Operations of Architectural Institute, 2016"]
+        [
+          "Date",
+          "2016"
+        ],
+        [
+          "Type",
+          "Academic work"
+        ],
+        [
+          "Supervisor",
+          "Albertus Wang, Francesco Cappellari"
+        ],
+        [
+          "Award",
+          "2nd Prize, Overseas Operations of Architectural Institute, 2016"
+        ]
       ],
       "captions": {},
       "draft_note": "正文是我根据原书 p58/p59 的零散文字和图纸重写的草稿"
@@ -347,9 +571,18 @@
         "A water square and a green carpet along the A20 carry the public side of that system, while the detailed plans work out how the flows move through the blocks: growing, harvesting, composting and returning to the soil within walking distance."
       ],
       "meta": [
-        ["Date", "2018"],
-        ["Type", "Academic work"],
-        ["Supervisor", "Nico Tillie"]
+        [
+          "Date",
+          "2018"
+        ],
+        [
+          "Type",
+          "Academic work"
+        ],
+        [
+          "Supervisor",
+          "Nico Tillie"
+        ]
       ],
       "captions": {
         "06": "Detailed plan — water square",

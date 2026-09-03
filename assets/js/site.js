@@ -32,3 +32,51 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('Intersec
   // Last resort: nothing on this site may stay invisible.
   setTimeout(revealAll, 4000);
 }
+
+// Lazy-loading has failed on this layout before (absolutely positioned plates
+// inside a ratio-sized canvas). If an image is on screen and still has not
+// decoded, stop waiting for the browser and fetch it.
+// Capture-only hooks: ?probe reports the document height in the title so a
+// screenshot script can size itself, and ?y scrolls to an offset so a tall page
+// can be captured in segments at a normal viewport (where lazy-loading behaves).
+(function(){
+  var q = new URLSearchParams(location.search);
+  if (q.has('y')) addEventListener('load', function(){
+    setTimeout(function(){ window.scrollTo(0, parseInt(q.get('y'), 10) || 0); }, 400);
+  });
+  // ?onepage makes the whole document one PDF page, so --print-to-pdf yields a
+  // valid full-page capture without relying on scroll or an over-tall window.
+  if (q.has('onepage')) addEventListener('load', function(){
+    setTimeout(function(){
+      var w = document.documentElement.scrollWidth;
+      var h = document.documentElement.scrollHeight;
+      var s = document.createElement('style');
+      s.textContent = '@page{size:' + w + 'px ' + h + 'px;margin:0}'
+                    + 'html,body{width:' + w + 'px}';
+      document.head.appendChild(s);
+    }, 700);
+  });
+  if (q.has('probe')) addEventListener('load', function(){
+    setTimeout(function(){
+      document.title = 'H=' + document.documentElement.scrollHeight
+                     + ' V=' + window.innerHeight;
+    }, 900);
+  });
+})();
+
+// ?eager=1 loads every picture up front. Used only for full-page capture, so
+// screenshots are valid evidence rather than a half-decoded page.
+if (location.search.indexOf('eager') > -1) {
+  document.querySelectorAll('img[loading="lazy"]').forEach(function(im){ im.loading = 'eager'; });
+}
+function rescueImages(){
+  document.querySelectorAll('img[loading="lazy"]').forEach(function(im){
+    if (im.complete && im.naturalWidth > 0) return;
+    var r = im.getBoundingClientRect();
+    if (r.bottom > -600 && r.top < window.innerHeight + 600) im.loading = 'eager';
+  });
+}
+addEventListener('scroll', rescueImages, { passive: true });
+addEventListener('resize', rescueImages, { passive: true });
+setTimeout(rescueImages, 1200);
+setTimeout(rescueImages, 3500);

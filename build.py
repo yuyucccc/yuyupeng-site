@@ -16,6 +16,7 @@ SITE, PROJECTS = DATA["site"], DATA["projects"]
 YEAR = datetime.date.today().year
 
 e = lambda s: html.escape(str(s), quote=True)
+EMD = "\u2014"   # em dash, kept out of f-string expressions (py3.9)
 
 # ── authored botanical marks ────────────────────────────────────────────
 # A tuft of tapered grass blades springing from one base line — drawn, not traced
@@ -65,9 +66,10 @@ def head(title, desc, rel, canonical):
 <meta property="og:url" content="{e(canonical)}">
 <meta name="theme-color" content="#454E22">
 <link rel="icon" href="{FAVICON}">
-<link rel="preload" href="{rel}assets/fonts/InstrumentSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{rel}assets/fonts/FamiljenGrotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.className+=" js"</script>
 <link rel="stylesheet" href="{rel}assets/css/site.css">
+<link rel="stylesheet" href="{rel}assets/css/layout.css">
 </head>
 <body>"""
 
@@ -115,53 +117,264 @@ def hero_of(p):
         if want and i["file"] == want: return i
     return ims[0]
 
+# ── spreads: authored compositions ─────────────────────────────────────
+# Each spread is a percentage canvas. "ar" is its height as a percent of its own
+# width; every slot is (role, left%, top%, width%). Slots may run past 100 or
+# start below 0 — that is a picture cropped by the page edge, which the reference
+# does on nearly every spread. A generator would produce mush, so these are set
+# by hand and matched to pictures by aspect: widest picture into the widest slot.
+
+
+# A slot at top t% whose content is H width-units tall needs the canvas to be at
+# least H / (1 - t/100) tall, or it spills past the canvas and lands on the next
+# spread. Authored "ar" is the intent; this raises it to whatever the content
+# actually needs, so compositions can be written freely and never collide.
+LABEL_U = 3.6          # a tile's title + place, in width-units
+CAP_U   = 2.4          # a figure caption
+
+def txt_units(s, w, px=13.0, lh=1.66):
+    """Rough height of a text block, in width-units (% of page width)."""
+    if not s: return 0.0
+    page = 1500.0
+    cw = px * 0.5
+    cpl = max(8.0, (w / 100.0) * page / cw)
+    lines = max(1, int(len(s) / cpl + 0.999))
+    return lines * px * lh / page * 100.0
+
+def need_ar(items, floor):
+    """items: (top%, height_in_width_units). Returns the canvas height needed."""
+    a = float(floor)
+    for t, h in items:
+        if h <= 0: continue
+        room = 1.0 - t / 100.0
+        if room <= 0.02: continue
+        a = max(a, h / room)
+    return round(a, 1)
+
+def picture(slug, i, rel, alt, w_pct, eager=False):
+    """900px at 1x, the original as 2x. Slots are 12-60% of a page that is at
+    most ~92vw, so nothing here ever needs more than 900 CSS px at 1x."""
+    d = rel + "assets/img/" + slug + "/"
+    small, big = d + i.get("w900", i["file"]), d + i["file"]
+    sizes = "(min-width:60rem) %.0fvw, 92vw" % max(8.0, w_pct * 0.92)
+    load = 'fetchpriority="high"' if eager else 'loading="lazy"'
+    srcset = ""
+    if i.get("w900") and i["w900"] != i["file"]:
+        srcset = (' srcset="' + small + " " + str(i.get("w900w", 900)) + "w, "
+                  + big + " " + str(i["w"]) + 'w" sizes="' + sizes + '"')
+    return ('<img src="' + small + '"' + srcset
+            + ' width="' + str(i["w"]) + '" height="' + str(i["h"]) + '"'
+            + " " + load + ' decoding="async" alt="' + e(alt) + '">')
+
+
+def box(l, t, w):
+    return "--l:{}%;--t:{}%;--w:{}%".format(l, t, w)
+
+def el(tag, style, inner, cls=""):
+    c = ' class="' + cls + '"' if cls else ""
+    return "<" + tag + c + ' style="' + style + '">' + inner + "</" + tag + ">"
+
+# image-only spreads, keyed by how many pictures they hold
+SPREADS = {
+ 1: [
+   (44, [("img", 12,  0, 62)]),
+   (36, [("img", 34,  0, 72)]),
+ ],
+ 2: [
+   (52, [("img", 14,  0, 26), ("img", 52, 16, 52)]),
+   (66, [("img", -3,  5, 52), ("img", 64,  0, 20)]),
+   (44, [("img", 30,  0, 74), ("img",  0, 26, 16)]),
+ ],
+ 3: [
+   (58, [("img",  0,  6, 16), ("img", 22, -4, 32), ("img", 60, 16, 44)]),
+   (64, [("img",  0,  3, 48), ("img", 54,  0, 14), ("img", 72, 28, 30)]),
+   (42, [("img",  2,  0, 15), ("img", 24, 12, 20), ("img", 52,  2, 50)]),
+ ],
+ 4: [
+   (72, [("img", -2,  7, 50), ("img", 56,  0, 15), ("img", 56, 24, 15), ("img", 78, 38, 26)]),
+   (68, [("img", 26, -5, 20), ("img", 54,  2, 48), ("img",  0, 24, 22), ("img", 34, 40, 34)]),
+ ],
+ 5: [
+   (82, [("img", 42, -6, 16), ("img", 66, -3, 38), ("img",  0, 14, 18),
+         ("img", 30, 28, 16), ("img",  2, 50, 56)]),
+ ],
+}
+
+# the opening spread: scatter from the first pixel, not a banner then content
+OPEN = (72, [("ttl",  0,  4, 34), ("img", 52, -6, 21), ("img", 80,  2, 20),
+             ("led",  0, 30, 26), ("hero", 40, 34, 60)])
+
+# the words spread: prose as margin notes among pictures
+WORDS = (56, [("bd1", 0, 3, 25), ("bd2", 29, 19, 25), ("fct", 85, 1, 15),
+              ("img", 55, 31, 45), ("img", 0, 42, 21)])
+
+
+def collide(ar, boxes, where):
+    """boxes: (left%, top%, w%, aspect_h_over_w). Warn on any real overlap.
+    top% resolves against the canvas height (= width * ar/100), so convert it
+    into width-units before comparing with a picture's own height."""
+    rects = []
+    for l, t, w, hw in boxes:
+        top_u = t * ar / 100.0
+        rects.append((l, top_u, l + w, top_u + w * hw))
+    for i in range(len(rects)):
+        for j in range(i + 1, len(rects)):
+            a, b = rects[i], rects[j]
+            ox = min(a[2], b[2]) - max(a[0], b[0])
+            oy = min(a[3], b[3]) - max(a[1], b[1])
+            if ox > 0.4 and oy > 0.4:
+                print("  ! overlap in %s: slot %d x slot %d (%.1f%% x %.1f%%)"
+                      % (where, i, j, ox, oy))
+
+
+def fill(slots, images, imhtml, capof):
+    """Widest picture into the widest slot; text slots pass through untouched."""
+    idx = [k for k, s in enumerate(slots) if s[0] in ("img", "hero")]
+    idx.sort(key=lambda k: -slots[k][3])
+    ranked = sorted(images, key=lambda i: -(i["w"] / i["h"]))
+    return dict(zip(idx, ranked))
+
+
+def spread(ar, slots, images, imhtml, capof, texts=None, eager_first=False):
+    texts = texts or {}
+    assign = fill(slots, images, imhtml, capof)
+
+    need = []
+    for k, (role, l, t, w) in enumerate(slots):
+        if role in ("img", "hero"):
+            img = assign.get(k)
+            if img:
+                h = w * img["h"] / img["w"] + (CAP_U if capof(img) else 0)
+                need.append((t, h))
+        else:
+            need.append((t, txt_units(re.sub("<[^>]+>", "", texts.get(role, "")), w,
+                                      37.0 if role in ("stm",) else
+                                      18.0 if role in ("ttl",) else
+                                      16.0 if role in ("led",) else 13.0,
+                                      1.24 if role in ("stm", "ttl") else 1.55)))
+    ar = need_ar(need, ar)
+    out, used = [], []
+    for k, (role, l, t, w) in enumerate(slots):
+        st = box(l, t, w)
+        if role in ("img", "hero"):
+            img = assign.get(k)
+            if not img: continue
+            used.append(img)
+            cap = capof(img)
+            fc = "<figcaption>" + e(cap) + "</figcaption>" if cap else ""
+            out.append(el("figure", st, imhtml(img, eager_first and role == "hero", w) + fc,
+                          "pl rise"))
+        else:
+            inner = texts.get(role, "")
+            if inner:
+                out.append(el("div", st, inner, "rise"))
+    boxes = []
+    for k, (role, l, t, w) in enumerate(slots):
+        img = assign.get(k)
+        if role in ("img", "hero") and img:
+            boxes.append((l, t, w, img["h"] / img["w"]))
+    if boxes: collide(ar, boxes, "spread ar=%s" % ar)
+    body = "\n   ".join(out)
+    return ('<div class="spread" style="--arn:' + str(ar) + '">\n   '
+            + body + "\n  </div>"), used
+
+
+def pack(images, imhtml, capof, seed=0):
+    """Lay the remaining pictures out over a varied run of authored spreads."""
+    out, i, turn = [], 0, seed
+    while i < len(images):
+        left = len(images) - i
+        n = 5 if left >= 5 else left
+        while n > 1 and n not in SPREADS:
+            n -= 1
+        opts = SPREADS[n]
+        ar, slots = opts[turn % len(opts)]
+        html_, used = spread(ar, slots, images[i:i+n], imhtml, capof)
+        out.append(html_)
+        i += n; turn += 1
+    return "\n  ".join(out)
+
+
 # ── home ────────────────────────────────────────────────────────────────
+# Authored per spread. The three current/realised projects take the anchors.
+HOME_OPEN = (64, [("stm",  0,  5, 34), ("mrk", 80,  5, 16), ("sub", 80, 23, 18),
+                  ("t0",  40,  1, 40), ("t1",  0, 56, 26), ("t2", 66, 44, 40)])
+# Width range 12-48 and slots that run past the page edge on purpose: a picture
+# cropped by the page boundary is the reference's signature move.
+HOME_SPREADS = [
+  (56, [("t",  0,  8, 14), ("t", 22,  0, 30), ("t", 60, 18, 44)]),
+  (68, [("t", -4,  4, 30), ("t", 34, 30, 22), ("t", 62,  0, 22), ("t", 88, 34, 16)]),
+  (50, [("t",  8,  0, 46), ("t", 62, 22, 18), ("t", 84,  2, 14)]),
+  (60, [("t",  0, 30, 22), ("t", 28,  0, 16), ("t", 50, 14, 48)]),
+  (46, [("t", 30,  0, 12), ("t", 48, 20, 26), ("t", 80,  0, 24)]),
+]
+
 def render_home():
-    def cell(p):
+    def tile(p, w_pct=26.0):
         h = hero_of(p)
         if not h: return ""
-        src = f"assets/img/{p['slug']}/{h['file']}"
-        return f"""  <a class="item rise" href="work/{p['slug']}/">
-   <figure><img src="{e(src)}" width="{h['w']}" height="{h['h']}" loading="lazy" decoding="async"
-     alt="{e(p['title'])} — {e(p['place'])}"></figure>
-   <div class="item__txt">
-    <h3>{e(p['title'])}</h3>
-    <p class="meta"><span>{e(p['place'])}</span><span>{e(p['years'])}</span></p>
-   </div>
-  </a>"""
+        return ('<a class="tile" href="work/' + p["slug"] + '/">'
+                + picture(p["slug"], h, "", p["title"] + " \u2014 " + p["place"], w_pct)
+                + '<span class="tile__t">' + e(p["title"]) + "</span>"
+                '<span class="tile__m">' + e(p["place"]) + " &middot; "
+                + e(p["years"]) + "</span></a>")
+
     pro = [p for p in PROJECTS if p["group"] == "professional"]
     aca = [p for p in PROJECTS if p["group"] == "academic"]
-    st = SITE["statement"]
-    st_html = st.replace("bridge between people and nature", "<em>bridge between people and nature</em>", 1)
+    st = SITE["statement"].replace("bridge between people and nature",
+            "<em>bridge between people and nature</em>", 1)
 
-    return f"""{head(f"{SITE['name']} — {SITE['role']}, {SITE['location']}", SITE['meta_description'], "", f"https://{SITE['domain']}/")}
+    # opening: the statement is one element among pictures, not a banner
+    ar, slots = HOME_OPEN
+    texts = {
+      "stm": '<h1 class="statement">' + st + "</h1>",
+      "mrk": mark("mark mark--cell", 7, "Grass"),
+      "sub": '<p class="blk blk--soft blk--fine">Selected public space, playground and '
+             'urban landscape projects for Gemeente Utrecht and Buro Sant en Co, and '
+             'academic work from Delft and Shenzhen.</p>',
+      "t0": tile(pro[0], 40), "t1": tile(pro[1], 26), "t2": tile(pro[2], 40),
+    }
+    op, need = [], []
+    for role, l, t, w in slots:
+        inner = texts.get(role, "")
+        if not inner: continue
+        op.append(el("div", box(l, t, w), inner, "rise"))
+        if role.startswith("t") and role[1:].isdigit():
+            pr = [pro[0], pro[1], pro[2]][int(role[1:])]
+            h0 = hero_of(pr)
+            need.append((t, w * h0["h"] / h0["w"] + LABEL_U if h0 else 0))
+        elif role == "mrk":
+            need.append((t, w * 0.41))
+        else:
+            need.append((t, txt_units(re.sub("<[^>]+>", "", inner), w,
+                                      37.0 if role == "stm" else 12.0,
+                                      1.24 if role == "stm" else 1.6)))
+    ar = need_ar(need, ar)
+    opening = ('<div class="spread" style="--arn:' + str(ar) + '">\n   '
+               + "\n   ".join(op) + "\n  </div>")
+
+    # the rest of the index, over authored spreads
+    rest = pro[3:] + aca
+    blocks, i, turn = [], 0, 0
+    while i < len(rest):
+        ar, slots = HOME_SPREADS[turn % len(HOME_SPREADS)]
+        n = min(len(slots), len(rest) - i)
+        cells, need = [], []
+        for (role, l, t, w), p in zip(slots[:n], rest[i:i+n]):
+            cells.append(el("div", box(l, t, w), tile(p, w), "rise"))
+            h0 = hero_of(p)
+            if h0: need.append((t, w * h0["h"] / h0["w"] + LABEL_U))
+        ar2 = need_ar(need, ar)
+        blocks.append('<div class="spread" style="--arn:' + str(ar2) + '">\n   '
+                      + "\n   ".join(cells) + "\n  </div>")
+        i += n; turn += 1
+
+    return f"""{head(f"{SITE['name']} {EMD} {SITE['role']}, {SITE['location']}", SITE['meta_description'], "", f"https://{SITE['domain']}/")}
 <main class="wrap">
 {masthead("", "home")}
-
- <section class="panel panel--flush">
-  <div class="grid hero-grid">
-   <div class="hero">
-    <h1>{st_html}</h1>
-   </div>
-   <div class="hero-aside">
-    {mark("mark", 7, "Grass")}
-    <p class="sub">Selected public space, playground and urban landscape projects for Gemeente Utrecht and Buro Sant en Co, and academic work from Delft and Shenzhen.</p>
-   </div>
-  </div>
- </section>
-
- <section class="panel panel--flush">
-  <div class="rail"><p class="label">Professional work</p><p class="label">{len(pro):02d}</p></div>
-  <div class="grid work">
-{chr(10).join(cell(p) for p in pro)}
-  </div>
- </section>
-
- <section class="panel panel--flush">
-  <div class="rail"><p class="label">Academic work</p><p class="label">{len(aca):02d}</p></div>
-  <div class="grid work">
-{chr(10).join(cell(p) for p in aca)}
-  </div>
+ <section class="panel page">
+  {opening}
+  {"".join(chr(10) + "  " + b for b in blocks)}
  </section>
 </main>
 {footer("")}"""
@@ -172,58 +385,76 @@ def render_project(p, nxt):
     hero = hero_of(p)
     rest = [i for i in ims if i is not hero]
     caps = p.get("captions", {})
+    slug, T = p["slug"], p["title"]
 
-    def plate(i, eager=False):
-        key = i["file"].split(".")[0]
-        cap = caps.get(key)
-        figcap = f'<figcaption>{e(cap)}</figcaption>' if cap else ""
-        # --nw carries the image's native pixel width so CSS can refuse to
-        # upscale it. Most of these come out of a print PDF at ~1250 px; blown
-        # to a 1365 px panel they go soft, and portraits grow past a screen.
-        return f"""<figure class="plate rise panel panel--flush">
-  <img src="../../assets/img/{p['slug']}/{i['file']}" width="{i['w']}" height="{i['h']}"
-   style="--nw:{i['w']}px"
-   {'fetchpriority="high"' if eager else 'loading="lazy"'} decoding="async"
-   alt="{e(p['title'])} — {e(cap) if cap else 'project drawing'}">
-  {figcap}
- </figure>"""
+    def capof(i): return caps.get(i["file"].split(".")[0])
+    def imhtml(i, eager=False, w_pct=30.0):
+        cap = capof(i)
+        alt = T + " \u2014 " + (cap if cap else "project drawing")
+        return picture(slug, i, "../../", alt, w_pct, eager)
 
-    facts = "\n".join(
-        f'   <div class="row"><dt>{e(k)}</dt><dd>{e(v)}</dd></div>' for k, v in p["meta"])
-    body = "\n".join(f"   <p>{e(t)}</p>" for t in p["body"])
-    note = (f'<p class="note">{e(p["draft_note"])}</p>' if p.get("draft_note") else "")
-    desc = p["lead"]
+    facts = "".join('<div class="frow"><dt>' + e(k) + "</dt><dd>" + e(v) + "</dd></div>"
+                    for k, v in p["meta"])
+    paras = [e(t) for t in p["body"]]
+    half = (len(paras) + 1) // 2
+    note = ('<p class="blk blk--soft blk--fine" style="margin-top:1rem">'
+            + e(p["draft_note"]) + "</p>") if p.get("draft_note") else ""
 
-    return f"""{head(f"{p['title']} — {SITE['name']}", desc, "../../", f"https://{SITE['domain']}/work/{p['slug']}/")}
+    # opening
+    ar, slots = OPEN
+    otexts = {
+      "ttl": '<a class="back" href="../../">' + ARROW_BACK + "<span>All work</span></a>"
+             '<h1 class="ptitle">' + e(T) + "</h1>"
+             '<p class="pwhere"><span>' + e(p["place"]) + "</span><span>"
+             + e(p["years"]) + "</span></p>",
+      "led": '<p class="plead">' + e(p["lead"]) + "</p>",
+    }
+    heroes = [hero] if hero else []
+    o_out = []
+    o_assign = 0
+    small = rest[:2]
+    for role, l, t, w in slots:
+        st = box(l, t, w)
+        if role == "hero":
+            if hero:
+                cap = capof(hero)
+                fc = "<figcaption>" + e(cap) + "</figcaption>" if cap else ""
+                o_out.append(el("figure", st, imhtml(hero, True, w) + fc, "pl rise"))
+        elif role == "img":
+            if o_assign < len(small):
+                i2 = small[o_assign]; o_assign += 1
+                cap = capof(i2)
+                fc = "<figcaption>" + e(cap) + "</figcaption>" if cap else ""
+                o_out.append(el("figure", st, imhtml(i2, False, w) + fc, "pl rise"))
+        else:
+            if otexts.get(role):
+                o_out.append(el("div", st, otexts[role], "rise"))
+    opening = ('<div class="spread" style="--arn:' + str(ar) + '">\n   '
+               + "\n   ".join(o_out) + "\n  </div>")
+
+    # words
+    war, wslots = WORDS
+    remaining = rest[o_assign:]
+    wtexts = {
+      "bd1": '<div class="blk">' + "".join("<p>" + t + "</p>" for t in paras[:half]) + "</div>",
+      "bd2": '<div class="blk">' + "".join("<p>" + t + "</p>" for t in paras[half:]) + note + "</div>",
+      "fct": '<dl class="facts">' + facts + "</dl>",
+    }
+    wpics = remaining[:2]
+    words_html, used = spread(war, wslots, wpics, imhtml, capof, wtexts)
+    remaining = remaining[len(wpics):]
+
+    plates = pack(remaining, imhtml, capof, seed=len(T) % 3) if remaining else ""
+
+    return f"""{head(f"{p['title']} {EMD} {SITE['name']}", p['lead'], "../../", f"https://{SITE['domain']}/work/{p['slug']}/")}
 <main class="wrap">
 {masthead("../../")}
-
  <article>
-  <div class="panel panel--flush">
-   <div class="head">
-    <a class="back" href="../../">{ARROW_BACK}<span>All work</span></a>
-    <h1>{e(p['title'])}</h1>
-    <p class="where"><span>{e(p['place'])}</span><span>{e(p['years'])}</span></p>
-    <p class="lead">{e(p['lead'])}</p>
-   </div>
-  </div>
-
-{plate(hero, eager=True) if hero else ""}
-
-  <div class="panel panel--flush">
-   <div class="split">
-    <div class="body">
-{body}
-{note}
-    </div>
-    <dl class="grid facts" style="margin:0">
-{facts}
-    </dl>
-   </div>
-  </div>
-
-{chr(10).join(plate(i) for i in rest)}
-
+  <section class="panel page">
+  {opening}
+  {words_html}
+  {plates}
+  </section>
   <a class="next panel panel--flush" href="../{nxt['slug']}/">
    <span>
     <span class="label">Next project</span>
@@ -270,6 +501,54 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('Intersec
   // Last resort: nothing on this site may stay invisible.
   setTimeout(revealAll, 4000);
 }
+
+// Lazy-loading has failed on this layout before (absolutely positioned plates
+// inside a ratio-sized canvas). If an image is on screen and still has not
+// decoded, stop waiting for the browser and fetch it.
+// Capture-only hooks: ?probe reports the document height in the title so a
+// screenshot script can size itself, and ?y scrolls to an offset so a tall page
+// can be captured in segments at a normal viewport (where lazy-loading behaves).
+(function(){
+  var q = new URLSearchParams(location.search);
+  if (q.has('y')) addEventListener('load', function(){
+    setTimeout(function(){ window.scrollTo(0, parseInt(q.get('y'), 10) || 0); }, 400);
+  });
+  // ?onepage makes the whole document one PDF page, so --print-to-pdf yields a
+  // valid full-page capture without relying on scroll or an over-tall window.
+  if (q.has('onepage')) addEventListener('load', function(){
+    setTimeout(function(){
+      var w = document.documentElement.scrollWidth;
+      var h = document.documentElement.scrollHeight;
+      var s = document.createElement('style');
+      s.textContent = '@page{size:' + w + 'px ' + h + 'px;margin:0}'
+                    + 'html,body{width:' + w + 'px}';
+      document.head.appendChild(s);
+    }, 700);
+  });
+  if (q.has('probe')) addEventListener('load', function(){
+    setTimeout(function(){
+      document.title = 'H=' + document.documentElement.scrollHeight
+                     + ' V=' + window.innerHeight;
+    }, 900);
+  });
+})();
+
+// ?eager=1 loads every picture up front. Used only for full-page capture, so
+// screenshots are valid evidence rather than a half-decoded page.
+if (location.search.indexOf('eager') > -1) {
+  document.querySelectorAll('img[loading="lazy"]').forEach(function(im){ im.loading = 'eager'; });
+}
+function rescueImages(){
+  document.querySelectorAll('img[loading="lazy"]').forEach(function(im){
+    if (im.complete && im.naturalWidth > 0) return;
+    var r = im.getBoundingClientRect();
+    if (r.bottom > -600 && r.top < window.innerHeight + 600) im.loading = 'eager';
+  });
+}
+addEventListener('scroll', rescueImages, { passive: true });
+addEventListener('resize', rescueImages, { passive: true });
+setTimeout(rescueImages, 1200);
+setTimeout(rescueImages, 3500);
 """
 
 NOT_FOUND = f"""{head(f"Not found — {SITE['name']}", "That page does not exist.", "", f"https://{SITE['domain']}/404.html")}
