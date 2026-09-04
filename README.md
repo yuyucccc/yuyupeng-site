@@ -62,6 +62,17 @@ DNS can take anywhere from ten minutes to a few hours to take effect. The
 
 ---
 
+
+## 在本机看网站
+
+**双击 `打开网站.command`** —— 浏览器会自动打开，关掉弹出的终端窗口就停止。
+
+第一次双击如果 macOS 提示「无法打开，因为它来自身份不明的开发者」：
+在文件上点右键 → 打开 → 再点「打开」。之后就可以直接双击了。
+
+logo 方案页不需要服务器，直接双击即可：
+`lab/logo2.html`（渐变版，现用）、`lab/logo.html`（转法与形态）
+
 ## Changing the site later
 
 **All text lives in `content.json`.** Never edit the `.html` files — they are
