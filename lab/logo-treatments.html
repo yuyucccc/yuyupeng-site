@@ -1,0 +1,94 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8"><title>Logo 黑色形态</title><style>
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:#000;
+  font:400 14px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+h1{font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  margin:0 0 4px}
+.note{font-size:12px;color:#777;margin:0 0 40px;max-width:60ch;line-height:1.6}
+h2{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  margin:56px 0 20px;padding-bottom:8px;border-bottom:1px solid #000}
+.wrap{padding:44px clamp(16px,4vw,56px) 90px}
+.grid{display:grid;gap:2px;background:#e6e6e6;
+  grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.cell{background:#fff;padding:26px 20px 20px;display:flex;flex-direction:column;
+  align-items:center;gap:18px}
+.stagewrap{height:190px;display:flex;align-items:center;justify-content:center;width:100%}
+.tag{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.desc{font-size:11px;color:#777;text-align:center;line-height:1.5;min-height:2.6em}
+
+/* ── 标记本体 ────────────────────────────────────────────
+   两个交叠的圆 = 一只眼 / 一枚镜头。3D 变换在场景里旋转。 */
+.stage{width:150px;height:110px;position:relative;isolation:isolate;
+  perspective:520px;perspective-origin:50% 50%;transform-style:preserve-3d}
+.ring{position:absolute;top:50%;left:50%;width:88px;height:88px;
+  margin:-44px 0 0 -44px;border-radius:50%;
+  border:1.5px solid #000;backface-visibility:visible}
+.ring--l{margin-left:-70px}
+.ring--r{margin-left:-18px}
+
+/* 形态 */
+.t-thick .ring{border-width:5px}
+.t-solid{background:#fff}
+/* white + difference on a white stage: white-on-white reads black, and the
+   second ring flips the overlap back to white — a true knockout */
+.t-solid .ring{background:#fff;border:none;mix-blend-mode:difference}
+.t-double .ring::after{content:"";position:absolute;inset:-9px;border-radius:50%;
+  border:1px solid rgba(0,0,0,.42)}
+.t-hair .ring{border-width:1px}
+
+/* ── 转法 ──────────────────────────────────────────── */
+@keyframes spinY{to{transform:rotateY(360deg)}}
+@keyframes spinYrev{to{transform:rotateY(-360deg)}}
+@keyframes spinX{to{transform:rotateX(360deg)}}
+@keyframes tumble{to{transform:rotate3d(1,1,0,360deg)}}
+@keyframes precess{
+  0%{transform:rotateZ(0) rotateY(62deg)}
+  100%{transform:rotateZ(360deg) rotateY(62deg)}}
+@keyframes irisZ{to{transform:rotateZ(360deg)}}
+@keyframes irisZrev{to{transform:rotateZ(-360deg)}}
+@keyframes drift{
+  0%{transform:rotateY(0) rotateX(9deg)}
+  50%{transform:rotateY(180deg) rotateX(-9deg)}
+  100%{transform:rotateY(360deg) rotateX(9deg)}}
+
+/* A 同向绕竖轴 —— 一起压扁再张开，像眼睛开合 */
+.v-a .ring{animation:spinY 7s linear infinite}
+/* B 陀螺仪 —— 一个绕竖轴、一个绕横轴 */
+.v-b .ring--l{animation:spinY 6s linear infinite}
+.v-b .ring--r{animation:spinX 8s linear infinite}
+/* C 对转 —— 两环反向穿过彼此，像剪刀 */
+.v-c .ring--l{animation:spinY 6.5s linear infinite}
+.v-c .ring--r{animation:spinYrev 6.5s linear infinite}
+/* D 翻滚 —— 斜轴连续翻转 */
+.v-d .ring{animation:tumble 9s linear infinite}
+/* E 进动 —— 倾斜着绕中心画圆，像镜头筒里的镜片 */
+.v-e .ring--l{animation:precess 8s linear infinite}
+.v-e .ring--r{animation:precess 8s linear infinite reverse}
+/* F 光圈 —— 平面对转，交叠处不断改变，像快门叶片 */
+.v-f{--o:0}
+.v-f .ring--l{animation:irisZ 11s linear infinite;transform-origin:70px 44px}
+.v-f .ring--r{animation:irisZrev 11s linear infinite;transform-origin:18px 44px}
+/* G 漂移 —— 绕竖轴转的同时轻微上下摆，最有“镜头感” */
+.v-g .ring{animation:drift 10s ease-in-out infinite}
+.v-g .ring--r{animation-delay:-2.4s}
+
+@media(prefers-reduced-motion:reduce){.ring{animation:none!important}}
+
+body{padding:34px 40px}
+.row{display:flex;align-items:center;gap:26px;border-bottom:1px solid #e6e6e6;padding:18px 0}
+.lab{width:210px;flex:none}
+.lab b{display:block;font-size:12px;letter-spacing:.18em}
+.lab span{display:block;font-size:13px;margin-top:2px}
+.lab em{display:block;font-size:11px;color:#777;font-style:normal;margin-top:5px;line-height:1.5}
+.strip{display:flex;gap:10px}
+.f{width:132px;height:104px;display:flex;align-items:center;justify-content:center;background:#fafafa}
+.stage{width:118px;height:88px}
+.ring{width:70px;height:70px;margin:-35px 0 0 -35px;animation-delay:var(--d)!important;
+      animation-play-state:paused!important}
+.ring--l{margin-left:-56px} .ring--r{margin-left:-14px}
+h1{margin-bottom:18px}
+</style></head><body><h1>Logo · 四种黑色形态（都用 A 的转法）</h1><div class="row"><div class="lab"><b>1</b><span>细线 1.5px</span><em>现在的样子改黑，最克制</em></div><div class="strip"><div class="f"><div class="stage v-a t-hair" style="--d:-0.00s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-hair" style="--d:-1.40s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-hair" style="--d:-2.80s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-hair" style="--d:-4.20s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-hair" style="--d:-5.60s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div></div></div>
+<div class="row"><div class="lab"><b>2</b><span>粗线 5px</span><em>轮廓更硬，远看更立得住</em></div><div class="strip"><div class="f"><div class="stage v-a t-thick" style="--d:-0.00s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-thick" style="--d:-1.40s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-thick" style="--d:-2.80s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-thick" style="--d:-4.20s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-thick" style="--d:-5.60s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div></div></div>
+<div class="row"><div class="lab"><b>3</b><span>实心 + 交叠挖空</span><em>黑块，交叠处反白 — 对比最强</em></div><div class="strip"><div class="f"><div class="stage v-a t-solid" style="--d:-0.00s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-solid" style="--d:-1.40s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-solid" style="--d:-2.80s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-solid" style="--d:-4.20s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-solid" style="--d:-5.60s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div></div></div>
+<div class="row"><div class="lab"><b>4</b><span>双环</span><em>内环 + 外圈细线，保留原 logo 的层次</em></div><div class="strip"><div class="f"><div class="stage v-a t-double" style="--d:-0.00s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-double" style="--d:-1.40s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-double" style="--d:-2.80s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-double" style="--d:-4.20s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div><div class="f"><div class="stage v-a t-double" style="--d:-5.60s"><div class="ring ring--l"></div><div class="ring ring--r"></div></div></div></div></div></body></html>

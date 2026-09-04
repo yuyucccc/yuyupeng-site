@@ -173,7 +173,8 @@
       "captions": {
         "01": "City within a village",
         "02": "River landscape as a framework"
-      }
+      },
+      "hero": "08.jpg"
     },
     {
       "slug": "groene-zoom",
@@ -424,7 +425,8 @@
         "05": "Section — kidzone",
         "06": "Section — freefun",
         "07": "Section — pumptrack"
-      }
+      },
+      "hero": "02.jpg"
     },
     {
       "slug": "tuin-van-overhoeks",

@@ -543,6 +543,69 @@ def render_project(p, nxt):
 </main>
 {footer("../../")}"""
 
+
+# ── v2 home: front + gallery on one page ────────────────────────────────
+# The mark is two overlapping rings — an eye you look through. Click it and a
+# film burn hands you the constellation: the mark shrinks to the centre and ten
+# projects hang off it on straight threads.
+#
+# Every project is a real <a> with real text in the source from the start. It is
+# only *positioned* by CSS, never injected by script, so a crawler and a screen
+# reader both get the whole list even though the page looks like a canvas.
+
+GALLERY = ["kameleon-speelplaats", "kei-3-0", "van-eysingalaan", "city-nieuwegein",
+           "groene-zoom", "parkstraat", "kloppend-hart-soest", "jaarbeursplein",
+           "de-koploper", "sport-dak-park"]
+
+# centre x%, centre y%, width% — a loose ring around the mark, sizes varied hard,
+# nothing closer than ~18% to the centre where the mark sits.
+NODES = [(26, 19, 14), (49, 12, 10), (73, 17, 12), (89, 55, 10), (77, 68, 13),
+         (57, 83, 11), (34, 78, 13), (15, 62, 10), (12, 34, 11), (67, 40, 8)]
+
+FAVICON_V2 = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
+              "viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23fff'/%3E"
+              "%3Ccircle cx='25' cy='32' r='15' fill='none' stroke='%23000' stroke-width='3'/%3E"
+              "%3Ccircle cx='39' cy='32' r='15' fill='none' stroke='%23000' stroke-width='3'/%3E"
+              "%3C/svg%3E")
+
+STORY = ('I perceive my role as a <em>bridge between people and nature</em>. '
+         'Public space, playgrounds and urban landscapes for Gemeente Utrecht '
+         'and Buro Sant en Co.')
+
+def render_home_v2():
+    idx = {p["slug"]: p for p in PROJECTS}
+    picks = [idx[s] for s in GALLERY if s in idx]
+
+    nodes, threads = [], []
+    for (x, y, w), p in zip(NODES, picks):
+        h = hero_of(p)
+        if not h:
+            continue
+        alt = p["title"] + " " + EMD + " " + p["place"]
+        nodes.append(
+            '<a class="node" style="--x:%d%%;--y:%d%%;--w:%d%%" href="work/%s/">'
+            % (x, y, w, p["slug"])
+            + picture(p["slug"], h, "", alt, w)
+            + '<span class="node__t">' + e(p["title"]) + "</span>"
+            + '<span class="node__m">' + e(p["place"]) + ", " + e(p["years"]) + "</span></a>")
+        threads.append('<line x1="50" y1="50" x2="%d" y2="%d"/>' % (x, y))
+
+    u, d = SITE["email"].split("@")
+    tpl = open(os.path.join(ROOT, "templates", "home.html"), encoding="utf-8").read()
+    for k, v in [
+        ("TITLE", e(SITE["name"] + " " + EMD + " " + SITE["role"] + ", " + SITE["location"])),
+        ("DESC", e(SITE["meta_description"])),
+        ("DOMAIN", SITE["domain"]),
+        ("FAVICON", FAVICON_V2),
+        ("STORY", STORY),
+        ("PLACE", e(SITE["location"])),
+        ("MAIL_U", e(u)), ("MAIL_D", e(d)),
+        ("THREADS", "\n  ".join(threads)),
+        ("NODES", "\n  ".join(nodes)),
+    ]:
+        tpl = tpl.replace("{{" + k + "}}", v)
+    return tpl
+
 # ── static extras ───────────────────────────────────────────────────────
 JS = """// ── curtain ───────────────────────────────────────────────────────────
 // The home opens behind a solid field with apertures cut through it. Click
@@ -683,7 +746,7 @@ def write(path, s):
     open(path, "w", encoding="utf-8").write(s)
 
 def main():
-    write(os.path.join(ROOT, "index.html"), render_home())
+    write(os.path.join(ROOT, "index.html"), render_home_v2())
     for i, p in enumerate(PROJECTS):
         nxt = PROJECTS[(i + 1) % len(PROJECTS)]
         write(os.path.join(ROOT, "work", p["slug"], "index.html"), render_project(p, nxt))

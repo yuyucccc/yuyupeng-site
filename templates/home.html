@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{TITLE}}</title>
+<meta name="description" content="{{DESC}}">
+<link rel="canonical" href="https://{{DOMAIN}}/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{DESC}}">
+<meta property="og:url" content="https://{{DOMAIN}}/">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="{{FAVICON}}">
+<script>document.documentElement.className+=" js"</script>
+<link rel="preload" href="assets/fonts/PlayfairDisplay-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/v2.css">
+</head>
+<body class="front">
+
+<a class="wordmark" href="/">YUYUPENG</a>
+
+<div class="frontwrap">
+  <p class="story">{{STORY}}</p>
+
+  <button class="mark" id="mark" type="button" aria-label="Open the work">
+    <span class="ring ring--l"></span><span class="ring ring--r"></span>
+  </button>
+
+  <p class="hint">Click</p>
+</div>
+
+<svg class="threads" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+  {{THREADS}}
+</svg>
+
+<nav class="field" aria-label="Selected work">
+  {{NODES}}
+</nav>
+
+<p class="corner corner--bl">{{PLACE}}</p>
+<p class="corner corner--br"><a class="js-mail" href="#" data-u="{{MAIL_U}}" data-d="{{MAIL_D}}"><span class="js-mail-txt">{{MAIL_U}}&#8203;<span aria-hidden="true"> [at] </span><span class="sr">@</span>&#8203;{{MAIL_D}}</span></a></p>
+
+<div class="grain" id="grain"></div>
+<div class="flash"></div>
+
+<script src="assets/js/v2.js" defer></script>
+</body>
+</html>
