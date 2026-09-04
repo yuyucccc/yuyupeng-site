@@ -544,6 +544,40 @@ def render_project(p, nxt):
 {footer("../../")}"""
 
 
+
+# ── the eye ─────────────────────────────────────────────────────────────
+# Her Betweenness mark, blue swapped for black. The 2D silhouette never moves —
+# the circles stay circles — and the *inside* turns: a gradient sweeping within a
+# fixed circular clip, which is what reads as a sphere rotating in its shell.
+# Variants live in lab/logo2.html; EYE picks the one in use.
+EYE = "3"
+R, DX = 50, 26
+
+def eye_mark(idp="eye"):
+    L, Rt = idp + "L", idp + "R"
+    sphere = ('<radialGradient id="%s" cx="34%%" cy="30%%" r="78%%">'
+              '<stop offset="0%%" stop-color="#8e8e8e"/>'
+              '<stop offset="52%%" stop-color="#2a2a2a"/>'
+              '<stop offset="100%%" stop-color="#000"/></radialGradient>')
+    s = ['<svg class="eye" viewBox="-92 -62 184 124" aria-hidden="true">']
+    s.append("<defs>" + (sphere % L) + (sphere % Rt)
+             + '<clipPath id="%scl"><circle cx="%d" cy="0" r="%d"/></clipPath>' % (idp, -DX, R)
+             + '<clipPath id="%scr"><circle cx="%d" cy="0" r="%d"/></clipPath>' % (idp, DX, R)
+             + '<clipPath id="%sci"><circle cx="%d" cy="0" r="%d"/></clipPath>' % (idp, DX, R)
+             + "</defs>")
+    for side, cx, gid in (("cl", -DX, L), ("cr", DX, Rt)):
+        s.append('<g clip-path="url(#%s%s)"><g class="eye__turn" style="transform-origin:%dpx 0px">'
+                 '<rect x="%d" y="-80" width="160" height="160" fill="url(#%s)"/></g></g>'
+                 % (idp, side, cx, cx - 80, gid))
+    # the overlap knocked out white — the pupil. Static, because the outline never moves.
+    s.append('<g clip-path="url(#%scl)"><g clip-path="url(#%sci)">'
+             '<rect x="-92" y="-62" width="184" height="124" fill="#fff"/></g></g>' % (idp, idp))
+    for cx in (-DX, DX):
+        s.append('<circle cx="%d" cy="0" r="%d" fill="none" stroke="#000" '
+                 'stroke-width="1" opacity=".5"/>' % (cx, R + 9))
+    s.append("</svg>")
+    return "".join(s)
+
 # ── v2 home: front + gallery on one page ────────────────────────────────
 # The mark is two overlapping rings — an eye you look through. Click it and a
 # film burn hands you the constellation: the mark shrinks to the centre and ten
@@ -559,7 +593,7 @@ GALLERY = ["kameleon-speelplaats", "kei-3-0", "van-eysingalaan", "city-nieuwegei
 
 # centre x%, centre y%, width% — a loose ring around the mark, sizes varied hard,
 # nothing closer than ~18% to the centre where the mark sits.
-NODES = [(26, 19, 14), (49, 12, 10), (73, 17, 12), (89, 55, 10), (77, 68, 13),
+NODES = [(29, 22, 14), (49, 12, 10), (73, 17, 12), (89, 55, 10), (77, 68, 13),
          (57, 83, 11), (34, 78, 13), (15, 62, 10), (12, 34, 11), (67, 40, 8)]
 
 FAVICON_V2 = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
@@ -577,17 +611,20 @@ def render_home_v2():
     picks = [idx[s] for s in GALLERY if s in idx]
 
     nodes, threads = [], []
-    for (x, y, w), p in zip(NODES, picks):
+    for i, ((x, y, w), p) in enumerate(zip(NODES, picks)):
         h = hero_of(p)
         if not h:
             continue
         alt = p["title"] + " " + EMD + " " + p["place"]
+        drift = 11 + (i * 2.7) % 9          # seconds
+        phase = -(i * 3.1) % 11               # start each one somewhere else
         nodes.append(
-            '<a class="node" style="--x:%d%%;--y:%d%%;--w:%d%%" href="work/%s/">'
-            % (x, y, w, p["slug"])
+            '<a class="node" style="--x:%d%%;--y:%d%%;--w:%d%%;--dur:%.1fs;--ph:%.1fs" href="work/%s/">'
+            % (x, y, w, drift, phase, p["slug"])
+            + '<span class="node__in">'
             + picture(p["slug"], h, "", alt, w)
             + '<span class="node__t">' + e(p["title"]) + "</span>"
-            + '<span class="node__m">' + e(p["place"]) + ", " + e(p["years"]) + "</span></a>")
+            + '<span class="node__m">' + e(p["place"]) + ", " + e(p["years"]) + "</span></span></a>")
         threads.append('<line x1="50" y1="50" x2="%d" y2="%d"/>' % (x, y))
 
     u, d = SITE["email"].split("@")
@@ -600,6 +637,7 @@ def render_home_v2():
         ("STORY", STORY),
         ("PLACE", e(SITE["location"])),
         ("MAIL_U", e(u)), ("MAIL_D", e(d)),
+        ("EYE", eye_mark()),
         ("THREADS", "\n  ".join(threads)),
         ("NODES", "\n  ".join(nodes)),
     ]:

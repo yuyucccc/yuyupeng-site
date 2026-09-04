@@ -47,6 +47,17 @@
   // Threads are drawn in a 0..100 box stretched over the viewport, so the ends
   // sit on the same percentages the nodes use. No resize maths needed.
 
+  // Click swells the picture before the project opens, so the tap is felt.
+  document.querySelectorAll('.node').forEach(function (n) {
+    n.addEventListener('click', function (ev) {
+      if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button !== 0) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      ev.preventDefault();
+      n.classList.add('pop');
+      setTimeout(function () { location.href = n.getAttribute('href'); }, 270);
+    });
+  });
+
   document.querySelectorAll('.js-mail').forEach(function (a) {
     var addr = a.dataset.u + '@' + a.dataset.d;
     a.href = 'mailto:' + addr;

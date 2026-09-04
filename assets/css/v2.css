@@ -52,8 +52,13 @@ a{color:inherit;text-decoration:none}
 /* ── fixed furniture ──────────────────────────────── */
 .wordmark{
   position:fixed;left:var(--edge);top:var(--edge);z-index:30;
-  font-size:clamp(13px,1.15vw,16px);font-weight:700;letter-spacing:.2em;
+  font-size:clamp(30px,4.4vw,68px);font-weight:700;letter-spacing:-.02em;
+  line-height:.92;
+  transition:font-size .8s var(--ease);
 }
+/* full size on the front, where it is the only text; smaller once the work is
+   out, so it stops crowding the top-left project */
+body.gallery .wordmark{font-size:clamp(19px,2.1vw,32px)}
 .corner{
   position:fixed;z-index:30;font-size:11px;font-weight:700;letter-spacing:.16em;
   text-transform:uppercase;color:var(--soft);
@@ -72,34 +77,24 @@ a{color:inherit;text-decoration:none}
 .story em{font-style:italic}
 body.gallery .story{opacity:0;pointer-events:none}
 
-/* ── the mark ─────────────────────────────────────── */
+/* ── the mark ─────────────────────────────────────
+   Her Betweenness symbol, blue swapped for black. The outline never moves —
+   the circles stay circles — and the inside turns: a gradient sweeping inside a
+   fixed circular clip, which is what reads as a sphere rotating in its shell. */
 .mark{
   position:fixed;left:50%;top:50%;z-index:25;
-  width:var(--mark,300px);height:calc(var(--mark,300px) * .74);
-  margin:calc(var(--mark,300px) * -.37) 0 0 calc(var(--mark,300px) * -.5);
+  width:var(--mark,300px);height:calc(var(--mark,300px) * .674);
+  margin:calc(var(--mark,300px) * -.337) 0 0 calc(var(--mark,300px) * -.5);
   appearance:none;border:0;background:none;padding:0;cursor:pointer;
-  perspective:900px;transform-style:preserve-3d;isolation:isolate;
-  /* the isolated group needs a real white backdrop, or difference blends
-     against transparency and the knockout comes out inverted */
-  background:var(--paper);
   transition:width .95s var(--ease),height .95s var(--ease),margin .95s var(--ease);
 }
-body.front .mark{--mark:clamp(230px,26vw,380px)}
-body.gallery .mark{--mark:clamp(96px,9vw,132px);cursor:default}
-
-.ring{
-  position:absolute;top:50%;left:50%;
-  width:62%;height:84%;margin:-42% 0 0 -31%;
-  border-radius:50%;background:#fff;mix-blend-mode:difference;
-  backface-visibility:visible;
-}
-.ring--l{margin-left:-49%}
-.ring--r{margin-left:-13%}
-
-@keyframes spinY{to{transform:rotateY(360deg)}}
-.ring{animation:spinY 7s linear infinite}
-body.filming .ring{animation-duration:.9s}
-@media(prefers-reduced-motion:reduce){.ring{animation:none}}
+body.front .mark{--mark:clamp(240px,27vw,400px)}
+body.gallery .mark{--mark:clamp(104px,10vw,148px);cursor:default}
+.eye{width:100%;height:100%;display:block;overflow:visible}
+.eye__turn{transform-origin:50% 50%;animation:eyeturn 13s linear infinite}
+@keyframes eyeturn{to{transform:rotate(360deg)}}
+body.filming .eye__turn{animation-duration:1.6s}
+@media(prefers-reduced-motion:reduce){.eye__turn{animation:none}}
 
 /* ── threads and projects ─────────────────────────── */
 .threads{
@@ -116,7 +111,9 @@ body.gallery .threads{opacity:1}
   opacity:0;pointer-events:none;
   transition:opacity .7s var(--ease),transform .7s var(--ease);
 }
-body.gallery .node{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
+body.gallery .node{opacity:1;transform:translate(-50%,-50%);pointer-events:auto;
+  animation:drift var(--dur,13s) ease-in-out var(--ph,0s) infinite}
+@media(prefers-reduced-motion:reduce){body.gallery .node{animation:none}}
 body.gallery .node:nth-child(2){transition-delay:.05s}
 body.gallery .node:nth-child(3){transition-delay:.1s}
 body.gallery .node:nth-child(4){transition-delay:.15s}
@@ -127,8 +124,22 @@ body.gallery .node:nth-child(8){transition-delay:.35s}
 body.gallery .node:nth-child(9){transition-delay:.4s}
 body.gallery .node:nth-child(10){transition-delay:.45s}
 
-.node img{width:100%;height:auto;transition:opacity .4s var(--ease)}
-.node:hover img,.node:focus-visible img{opacity:.72}
+/* Pictures are shown exactly as they are — no filter, no dimming. They drift
+   continuously, lift a little under the pointer, and swell on click before the
+   project opens. */
+.node img{width:100%;height:auto}
+.node__in{display:block;transition:transform .5s var(--ease);will-change:transform}
+.node:hover .node__in,.node:focus-visible .node__in{transform:scale(1.06)}
+.node.pop .node__in{transform:scale(1.19);transition-duration:.28s}
+.node:hover,.node:focus-visible{z-index:24}
+
+@keyframes drift{
+  0%  {transform:translate(-50%,-50%) translate(0,0)}
+  25% {transform:translate(-50%,-50%) translate(6px,-9px)}
+  50% {transform:translate(-50%,-50%) translate(-4px,-14px)}
+  75% {transform:translate(-50%,-50%) translate(-8px,-5px)}
+  100%{transform:translate(-50%,-50%) translate(0,0)}
+}
 .node__t,.node__m{display:block;
   /* a narrow picture must not squeeze its label into three lines; the text is
      allowed to run wider than the image it sits under */
