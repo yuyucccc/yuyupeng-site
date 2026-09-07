@@ -6,9 +6,9 @@
    you to GALLERY: the mark shrinks to the centre and ten projects hang
    off it on straight threads.
 
-   The mark is two overlapping rings — an eye, a lens. It turns all the
-   time, and every project is something you see through it.
-   ──────────────────────────────────────────────────────────────────── */
+   The mark is her own drawing, out of logo2.ai — two overlapping circles, an
+   eye you look through. It holds three forms of one object, wire, filled and
+   inverted, and the animation plays them in turn. */
 
 @font-face{font-family:"Playfair Display";font-style:normal;font-weight:400 900;font-display:swap;
   src:url(../fonts/PlayfairDisplay-latin.woff2) format("woff2");
@@ -83,18 +83,36 @@ body.gallery .story{opacity:0;pointer-events:none}
    fixed circular clip, which is what reads as a sphere rotating in its shell. */
 .mark{
   position:fixed;left:50%;top:50%;z-index:25;
-  width:var(--mark,300px);height:calc(var(--mark,300px) * .674);
-  margin:calc(var(--mark,300px) * -.337) 0 0 calc(var(--mark,300px) * -.5);
+  /* 352 x 340 — the drawing's own box, wide enough to hold form 3's halo */
+  width:var(--mark,300px);height:calc(var(--mark,300px) * .9659);
+  margin:calc(var(--mark,300px) * -.483) 0 0 calc(var(--mark,300px) * -.5);
   appearance:none;border:0;background:none;padding:0;cursor:pointer;
   transition:width .95s var(--ease),height .95s var(--ease),margin .95s var(--ease);
 }
-body.front .mark{--mark:clamp(240px,27vw,400px)}
-body.gallery .mark{--mark:clamp(104px,10vw,148px);cursor:default}
-.eye{width:100%;height:100%;display:block;overflow:visible}
-.eye__turn{transform-origin:50% 50%;animation:eyeturn 13s linear infinite}
-@keyframes eyeturn{to{transform:rotate(360deg)}}
-body.filming .eye__turn{animation-duration:1.6s}
-@media(prefers-reduced-motion:reduce){.eye__turn{animation:none}}
+body.front .mark{--mark:clamp(280px,31vw,468px)}
+body.gallery .mark{--mark:clamp(122px,11.5vw,174px);cursor:default}
+.mark__svg{width:100%;height:100%;display:block;overflow:visible}
+
+/* The mark, animated: variant 01 out of lab/logo3.html. Her file holds three
+   forms of one object — wire, filled, inverted — so the animation only plays
+   them in turn. Nothing is ever stretched or recoloured: at every instant what
+   is on screen is exactly one of the drawings, and the two circles never move.
+   A negative delay runs a form ahead, so form k needs -(3-k)/3 of a cycle to
+   land in its own third, and each fade-out is met by the next fade-in. */
+.mark__svg .f,.mark__svg .turn{transform-box:view-box;transform-origin:50% 50%}
+.mark__svg .f{animation:markcycle var(--cyc,16s) linear infinite}
+.mark__svg .f2{animation-delay:calc(var(--cyc,16s) / -3 * 2)}
+.mark__svg .f3{animation-delay:calc(var(--cyc,16s) / -3)}
+@keyframes markcycle{
+  0%{opacity:1} 24.33%{opacity:1} 33.33%{opacity:0}
+  91%{opacity:0} 100%{opacity:1}
+}
+/* the burn runs the whole cycle through in the time the film flickers */
+body.filming .mark__svg{--cyc:2.6s}
+@media(prefers-reduced-motion:reduce){
+  .mark__svg .f{animation:none}
+  .mark__svg .f2,.mark__svg .f3{opacity:0}
+}
 
 /* ── threads and projects ─────────────────────────── */
 .threads{
@@ -111,9 +129,7 @@ body.gallery .threads{opacity:1}
   opacity:0;pointer-events:none;
   transition:opacity .7s var(--ease),transform .7s var(--ease);
 }
-body.gallery .node{opacity:1;transform:translate(-50%,-50%);pointer-events:auto;
-  animation:drift var(--dur,13s) ease-in-out var(--ph,0s) infinite}
-@media(prefers-reduced-motion:reduce){body.gallery .node{animation:none}}
+body.gallery .node{opacity:1;transform:translate(-50%,-50%);pointer-events:auto}
 body.gallery .node:nth-child(2){transition-delay:.05s}
 body.gallery .node:nth-child(3){transition-delay:.1s}
 body.gallery .node:nth-child(4){transition-delay:.15s}
@@ -128,18 +144,19 @@ body.gallery .node:nth-child(10){transition-delay:.45s}
    continuously, lift a little under the pointer, and swell on click before the
    project opens. */
 .node img{width:100%;height:auto}
-.node__in{display:block;transition:transform .5s var(--ease);will-change:transform}
+.node__in{display:block;transition:transform .5s var(--ease)}
 .node:hover .node__in,.node:focus-visible .node__in{transform:scale(1.06)}
 .node.pop .node__in{transform:scale(1.19);transition-duration:.28s}
 .node:hover,.node:focus-visible{z-index:24}
 
-@keyframes drift{
-  0%  {transform:translate(-50%,-50%) translate(0,0)}
-  25% {transform:translate(-50%,-50%) translate(6px,-9px)}
-  50% {transform:translate(-50%,-50%) translate(-4px,-14px)}
-  75% {transform:translate(-50%,-50%) translate(-8px,-5px)}
-  100%{transform:translate(-50%,-50%) translate(0,0)}
-}
+/* Three transforms, three elements, so none of them fight:
+   .node   places the picture and plays the entrance
+   .node__d carries the motion — drift plus the lag after the pointer, written
+            by script every frame, because the threads must end exactly where
+            the pictures are and reading that back from layout would force ten
+            reflows a frame
+   .node__in scales under the pointer and on the click */
+.node__d{display:block;will-change:transform}
 .node__t,.node__m{display:block;
   /* a narrow picture must not squeeze its label into three lines; the text is
      allowed to run wider than the image it sits under */

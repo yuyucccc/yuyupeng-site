@@ -545,38 +545,268 @@ def render_project(p, nxt):
 
 
 
-# ── the eye ─────────────────────────────────────────────────────────────
-# Her Betweenness mark, blue swapped for black. The 2D silhouette never moves —
-# the circles stay circles — and the *inside* turns: a gradient sweeping within a
-# fixed circular clip, which is what reads as a sphere rotating in its shell.
-# Variants live in lab/logo2.html; EYE picks the one in use.
-EYE = "3"
-R, DX = 50, 26
+# ── the mark ────────────────────────────────────────────────────────────
+# Taken straight out of her logo2.ai, not redrawn by eye. The Bézier points and
+# the gradient functions below were read out of that file's PDF operators, and
+# the tone curve was measured against a 1:1 render of the original: her CMYK
+# 100% K lands on rgb(55,55,55), a soft charcoal, and she asked to keep it.
+#
+# The file holds three forms. They are not three logos — they are one object at
+# three stages of turning into the light: wire, filled, inverted. So the whole
+# animation vocabulary is already in her drawing; nothing has to be invented.
 
-def eye_mark(idp="eye"):
-    L, Rt = idp + "L", idp + "R"
-    sphere = ('<radialGradient id="%s" cx="34%%" cy="30%%" r="78%%">'
-              '<stop offset="0%%" stop-color="#8e8e8e"/>'
-              '<stop offset="52%%" stop-color="#2a2a2a"/>'
-              '<stop offset="100%%" stop-color="#000"/></radialGradient>')
-    s = ['<svg class="eye" viewBox="-92 -62 184 124" aria-hidden="true">']
-    s.append("<defs>" + (sphere % L) + (sphere % Rt)
-             + '<clipPath id="%scl"><circle cx="%d" cy="0" r="%d"/></clipPath>' % (idp, -DX, R)
-             + '<clipPath id="%scr"><circle cx="%d" cy="0" r="%d"/></clipPath>' % (idp, DX, R)
-             + '<clipPath id="%sci"><circle cx="%d" cy="0" r="%d"/></clipPath>' % (idp, DX, R)
-             + "</defs>")
-    for side, cx, gid in (("cl", -DX, L), ("cr", DX, Rt)):
-        s.append('<g clip-path="url(#%s%s)"><g class="eye__turn" style="transform-origin:%dpx 0px">'
-                 '<rect x="%d" y="-80" width="160" height="160" fill="url(#%s)"/></g></g>'
-                 % (idp, side, cx, cx - 80, gid))
-    # the overlap knocked out white — the pupil. Static, because the outline never moves.
-    s.append('<g clip-path="url(#%scl)"><g clip-path="url(#%sci)">'
-             '<rect x="-92" y="-62" width="184" height="124" fill="#fff"/></g></g>' % (idp, idp))
-    for cx in (-DX, DX):
-        s.append('<circle cx="%d" cy="0" r="%d" fill="none" stroke="#000" '
-                 'stroke-width="1" opacity=".5"/>' % (cx, R + 9))
-    s.append("</svg>")
-    return "".join(s)
+INK = 55                             # her CMYK black, converted for screen
+DOM = 0.997963                       # where Illustrator ended every gradient
+
+# Centre-relative, in the file's own points, y as Illustrator wrote it (up).
+# Two overlapping circles: r 67.717 at ±51.106 (the body), r 79.493 at ±59.993
+# (the ring that floats outside it).
+_IN_A = [(0, -44.429),
+         (12.415, -58.698), (30.707, -67.717), (51.106, -67.717),
+         (88.505, -67.717), (118.823, -37.399), (118.823, 0),
+         (118.823, 37.399), (88.505, 67.717), (51.106, 67.717),
+         (30.707, 67.717), (12.415, 58.698), (0, 44.429)]
+_IN_B = [(0.001, 44.428),
+         (-12.414, 58.697), (-30.706, 67.717), (-51.106, 67.717),
+         (-88.505, 67.717), (-118.823, 37.399), (-118.823, 0),
+         (-118.823, -37.399), (-88.505, -67.717), (-51.106, -67.717),
+         (-30.706, -67.717), (-12.414, -58.697), (0.001, -44.428)]
+_OUT_A = [(0, -52.155),
+          (14.574, -68.905), (36.047, -79.493), (59.993, -79.493),
+          (103.896, -79.493), (139.487, -43.903), (139.487, 0),
+          (139.487, 43.903), (103.896, 79.493), (59.993, 79.493),
+          (36.047, 79.493), (14.574, 68.905), (0, 52.155)]
+_OUT_B = [(0.002, 52.154),
+          (-14.572, 68.905), (-36.046, 79.493), (-59.993, 79.493),
+          (-103.896, 79.493), (-139.486, 43.903), (-139.486, 0),
+          (-139.486, -43.903), (-103.896, -79.493), (-59.993, -79.493),
+          (-36.046, -79.493), (-14.572, -68.906), (0.002, -52.154)]
+
+
+def _path(a, b):
+    "Illustrator's y-up points as one SVG outline."
+    f = lambda p: "%.3f %.3f" % (p[0], -p[1])
+    out = ["M " + f(a[0])]
+    for i in range(1, 13, 3):
+        out.append("C " + " ".join(f(a[i + j]) for j in range(3)))
+    out.append("L " + f(b[0]))
+    for i in range(1, 13, 3):
+        out.append("C " + " ".join(f(b[i + j]) for j in range(3)))
+    return " ".join(out) + " Z"
+
+
+BODY = _path(_IN_A, _IN_B)           # the filled shape, and form 1's inner wire
+RING = _path(_OUT_A, _OUT_B)         # the wire outside it
+
+# The gradients, evaluated from the file's own stitching functions. Each returns
+# ink coverage 0–1 at radius s (1 = the gradient's own edge).
+def _g_wire(s):  return 0.0 if s >= DOM else 1 - (s / DOM) ** 3.40967
+def _g_body(s):  return 0.0 if s >= DOM else 1 - (s / DOM) ** 1.2964
+def _g_halo(s):  return 0.0 if s >= DOM else (1 - s / DOM) ** 1.65097
+def _g_lit(s):   return 0.66 * (1 - s)
+def _g_wire3(s):
+    if s < 0.118457: return 1.0
+    if s < 0.39126:  return 1 - (s - 0.118457) / 0.272803 * 0.119708
+    return 0.880292 * (1 - (s - 0.39126) / 0.60874)
+
+
+def _grad(gid, r, fn, cx=0.0, cy=0.0, n=22):
+    stops = "".join('<stop offset="%.4f" stop-color="currentColor" stop-opacity="%.4f"/>'
+                    % (i / n, fn(i / n)) for i in range(n + 1))
+    return ('<radialGradient id="%s" gradientUnits="userSpaceOnUse" cx="%g" cy="%g" r="%g">'
+            '%s</radialGradient>' % (gid, cx, cy, r, stops))
+
+
+def _lit(idp, key, d, gid, width=None):
+    """Ink laid through a shape, so the outline can never move and only the light
+    inside it does. The shape becomes a mask and the gradient rides a plate
+    behind it that the animation is free to turn or scale. Mask ids end in
+    "msk" and gradient ids in "g" — share one namespace and url(#…) silently
+    resolves to the wrong node, which drops the mask and floods the frame."""
+    m = idp + key + "msk"
+    if width is None:
+        cut = '<path d="%s" fill="#fff"/>' % d
+    else:
+        cut = ('<path d="%s" fill="none" stroke="#fff" stroke-width="%g" '
+               'stroke-linejoin="round" stroke-linecap="round"/>' % (d, width))
+    return ('<mask id="%s" maskUnits="userSpaceOnUse" x="-320" y="-320" width="640" height="640">'
+            '%s</mask>'
+            '<g mask="url(#%s)"><g class="turn turn--%s">'
+            '<rect x="-320" y="-320" width="640" height="640" fill="url(#%s)"/></g></g>'
+            % (m, cut, m, key, gid))
+
+
+def logo_mark(idp="m", forms=(1, 2, 3), ox=0.0, oy=0.0, cls="mark__svg"):
+    """Her three forms in one SVG, each in its own layer so CSS can cross-fade,
+    stack or gate them. ox/oy pushes the gradient centres off the middle: at 0,0
+    every form is pixel-for-pixel the drawing she handed over, and an orbit has
+    nothing to move, so the turning variants ask for an offset."""
+    ink = "rgb(%d,%d,%d)" % (INK, INK, INK)
+    g, layers = [], []
+
+    for form in forms:
+      if form == 1:
+        g += [_grad(idp + "1ag", 98.1547, _g_wire, ox, oy),
+              _grad(idp + "1bg", 114.972, _g_wire, ox, oy)]
+        layers.append('<g class="f f1">%s%s</g>'
+                      % (_lit(idp, "1a", BODY, idp + "1ag", 3),
+                         _lit(idp, "1b", RING, idp + "1bg", 2)))
+      elif form == 2:
+        g += [_grad(idp + "2ag", 96.7072, _g_body, ox, oy),
+              _grad(idp + "2bg", 114.972, _g_wire, ox, oy)]
+        layers.append('<g class="f f2">%s%s</g>'
+                      % (_lit(idp, "2a", BODY, idp + "2ag"),
+                         _lit(idp, "2b", RING, idp + "2bg", 3)))
+      else:
+        # form 3 is the inverted one: the body is painted light *over* the halo,
+        # so it needs an opaque knockout the other two do not.
+        g += [_grad(idp + "3hg", 165.667, _g_halo, -4.327 + ox, -0.971 + oy),
+              _grad(idp + "3ag", 96.7072, _g_lit, ox, oy),
+              _grad(idp + "3bg", 114.489, _g_wire3, ox, oy),
+              '<mask id="%s3hmsk" maskUnits="userSpaceOnUse" x="-320" y="-320" '
+              'width="640" height="640"><circle cx="-4.327" cy="-0.971" r="165.667" '
+              'fill="#fff"/></mask>' % idp]
+        layers.append('<g class="f f3">'
+                      '<g mask="url(#%s3hmsk)"><g class="turn turn--3h">'
+                      '<rect x="-320" y="-320" width="640" height="640" fill="url(#%s3hg)"/></g></g>'
+                      '<path d="%s" fill="var(--paper,#fff)"/>%s%s</g>'
+                      % (idp, idp, BODY,
+                         _lit(idp, "3a", BODY, idp + "3ag"),
+                         _lit(idp, "3b", RING, idp + "3bg", 2)))
+
+    return ('<svg class="%s" viewBox="-176 -170 352 340" color="%s" aria-hidden="true">'
+            '<defs>%s</defs>%s</svg>' % (cls, ink, "".join(g), "".join(layers)))
+
+
+# ── logo lab ────────────────────────────────────────────────────────────
+# Six ways to animate the three forms, side by side, so she can pick one by
+# number. Every one uses the real vector — none of them redraw anything.
+
+VARIANTS = [
+    ("cycle", "1 &rarr; 2 &rarr; 3, cross-fading",
+     "The three forms are one object turning into the light, so it just plays "
+     "them in order. Nothing is ever distorted &mdash; at every instant what is "
+     "on screen is exactly one of your drawings."),
+    ("states", "still / hover / press",
+     "Form 1 at rest, form 2 when the pointer is on it, form 3 while pressed. "
+     "No loop: it only moves when you do. The most like a real lens."),
+    ("stack", "all three at once",
+     "The three forms overlap at reduced weight, each turning its light at its "
+     "own rate. Reads as depth rather than as a sequence."),
+    ("iris", "the aperture breathes",
+     "Form 2 alone. The outline never moves; the lit core opens and closes "
+     "inside it, the way an aperture does."),
+    ("turn", "the light orbits",
+     "Form 2 alone, the gradient centre pushed off the middle and orbiting. "
+     "The 2D silhouette is frozen and the inside turns in 3D &mdash; the thing "
+     "you asked for, at its plainest."),
+    ("cycleturn", "1 &rarr; 2 &rarr; 3, and the light orbits",
+     "The cross-fade with the orbit under it. The fullest version, and the one "
+     "that departs furthest from the flat drawing."),
+]
+
+LAB_CSS = """
+:root{--paper:#fff;--ink:rgb(55,55,55);--soft:#8a8a8a;--sp:14s}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:#111;
+  font:13px/1.55 Helvetica,"Helvetica Neue",Arial,sans-serif;padding:38px 40px 90px}
+h1{font-size:15px;font-weight:700;letter-spacing:-.01em;margin:0 0 4px}
+.sub{color:var(--soft);margin:0 0 34px;max-width:62ch;font-size:12px}
+.grid{display:grid;gap:34px 26px;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));max-width:1320px}
+.cell{min-width:0}
+.stage{aspect-ratio:1/.92;display:grid;place-items:center;border:1px solid #ececec}
+.mark__svg{width:88%;height:88%;overflow:visible;display:block}
+.no{font:700 11px/1 Helvetica,Arial,sans-serif;letter-spacing:.1em;color:#111;
+  display:inline-block;margin:13px 0 3px}
+.nm{font-size:12px;color:#111;margin:0 0 4px}
+.d{font-size:11.5px;line-height:1.5;color:var(--soft);margin:0}
+.ctl{position:fixed;right:22px;bottom:20px;background:#fff;border:1px solid #e4e4e4;
+  padding:9px 13px;font-size:11px;color:var(--soft);display:flex;gap:11px;align-items:center}
+.ctl input{width:132px}
+
+/* Every form sits in the same box, so a cross-fade never shifts anything.
+   transform-box:view-box is what makes 50% 50% mean the centre of the viewBox,
+   which is the centre of the mark; without it the percentages resolve against
+   the 640pt plate and an orbit throws the gradient out of frame. */
+.f,.turn{transform-box:view-box;transform-origin:50% 50%}
+
+/* 1 — cross-fade through the three drawings.
+   A negative delay runs a form ahead, so form k needs -(3-k)/3 of a cycle to
+   land in its own third. Each fade-out is met exactly by the next fade-in. */
+.v-cycle .f,.v-cycleturn .f{animation:xf var(--sp) linear infinite}
+.v-cycle .f2,.v-cycleturn .f2{animation-delay:calc(var(--sp) / -3 * 2)}
+.v-cycle .f3,.v-cycleturn .f3{animation-delay:calc(var(--sp) / -3)}
+@keyframes xf{
+  0%{opacity:1} 24.33%{opacity:1} 33.33%{opacity:0}
+  91%{opacity:0} 100%{opacity:1}
+}
+
+/* 2 — the forms answer the pointer instead of a clock */
+.v-states .f2,.v-states .f3{opacity:0}
+.v-states .f,.v-states .f2,.v-states .f3{transition:opacity .5s cubic-bezier(.16,1,.3,1)}
+.v-states:hover .f1{opacity:0}
+.v-states:hover .f2{opacity:1}
+.v-states:active .f2{opacity:0}
+.v-states:active .f3{opacity:1}
+
+/* 3 — the three held together, each turning at its own rate. Form 3 is painted
+   first: it carries an opaque knockout, and on top it would wipe the other two. */
+.v-stack .f1{opacity:.95}
+.v-stack .f2{opacity:.3}
+.v-stack .f3{opacity:.45}
+.v-stack .turn{animation:orbit calc(var(--sp) * 1.4) linear infinite}
+.v-stack .f2 .turn{animation-duration:calc(var(--sp) * .8);animation-direction:reverse}
+.v-stack .f3 .turn{animation-duration:calc(var(--sp) * 2.1)}
+
+/* 4 — the aperture breathes inside a frozen outline */
+.v-iris .turn--2a{animation:iris calc(var(--sp) * .55) ease-in-out infinite}
+@keyframes iris{0%,100%{transform:scale(1)}50%{transform:scale(.42)}}
+
+/* 5 — the light orbits: 2D frozen, 3D turning */
+.v-turn .turn,.v-cycleturn .turn{animation:orbit var(--sp) linear infinite}
+
+/* the plate carrying the gradient swings its offset centre around the middle */
+@keyframes orbit{to{transform:rotate(360deg)}}
+
+@media(prefers-reduced-motion:reduce){.f,.turn{animation:none!important}}
+"""
+
+
+def render_logo_lab():
+    cells = []
+    for i, (key, name, why) in enumerate(VARIANTS, 1):
+        forms = (2,) if key in ("iris", "turn") else (
+            (3, 1, 2) if key == "stack" else (1, 2, 3))
+        # the orbiting variants need the gradient centre off the middle, or
+        # spinning a centred radial gradient would show nothing at all
+        off = 26.0 if key in ("stack", "turn", "cycleturn") else 0.0
+        svg = logo_mark("v%d" % i, forms=forms, ox=off, oy=0.0)
+        cells.append(
+            '<div class="cell"><div class="stage v-%s">%s</div>'
+            '<span class="no">%02d</span>'
+            '<p class="nm">%s</p><p class="d">%s</p></div>' % (key, svg, i, name, why))
+
+    return ("""<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Logo animation &mdash; six ways</title>
+<style>%s</style></head><body>
+<h1>Six ways to animate the mark</h1>
+<p class="sub">All six use the vector out of <b>logo2.ai</b> &mdash; the curves and the
+gradients are read from the file, not redrawn. The ink is your CMYK black as it
+converts for screen, rgb(55,55,55). Tell me a number.</p>
+<div class="grid">%s</div>
+<div class="ctl"><span>speed</span>
+<input id="sp" type="range" min="4" max="30" value="14" step="1">
+<span id="spv">14s</span></div>
+<script>
+var sp=document.getElementById('sp'),spv=document.getElementById('spv');
+sp.addEventListener('input',function(){
+  document.documentElement.style.setProperty('--sp',sp.value+'s');
+  spv.textContent=sp.value+'s';});
+</script>
+</body></html>""" % (LAB_CSS, "\n".join(cells)))
+
 
 # ── v2 home: front + gallery on one page ────────────────────────────────
 # The mark is two overlapping rings — an eye you look through. Click it and a
@@ -587,14 +817,23 @@ def eye_mark(idp="eye"):
 # only *positioned* by CSS, never injected by script, so a crawler and a screen
 # reader both get the whole list even though the page looks like a canvas.
 
+# The home page wears variant 01 of lab/logo3.html; the cross-fade itself is in
+# v2.css. LOGO_OFF pushes the gradient centres off the middle, which only the
+# orbiting variants need — at 0 the mark is pixel-for-pixel the drawing in
+# logo2.ai, which is what variant 01 wants.
+LOGO_OFF = 0.0
+
 GALLERY = ["kameleon-speelplaats", "kei-3-0", "van-eysingalaan", "city-nieuwegein",
            "groene-zoom", "parkstraat", "kloppend-hart-soest", "jaarbeursplein",
            "de-koploper", "sport-dak-park"]
 
 # centre x%, centre y%, width% — a loose ring around the mark, sizes varied hard,
 # nothing closer than ~18% to the centre where the mark sits.
-NODES = [(29, 22, 14), (49, 12, 10), (73, 17, 12), (89, 55, 10), (77, 68, 13),
-         (57, 83, 11), (34, 78, 13), (15, 62, 10), (12, 34, 11), (67, 40, 8)]
+# Held off the margins by about the distance the motion can travel, so a
+# picture near an edge still has somewhere to go and does not spend its life
+# pinned against the glass.
+NODES = [(28, 24, 14), (48, 16, 10), (72, 20, 12), (84, 54, 10), (76, 67, 13),
+         (56, 80, 11), (34, 76, 13), (18, 62, 10), (17, 35, 11), (66, 41, 8)]
 
 FAVICON_V2 = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
               "viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23fff'/%3E"
@@ -616,15 +855,17 @@ def render_home_v2():
         if not h:
             continue
         alt = p["title"] + " " + EMD + " " + p["place"]
-        drift = 11 + (i * 2.7) % 9          # seconds
-        phase = -(i * 3.1) % 11               # start each one somewhere else
+        # Depth: the small pictures read as further off, so they answer the
+        # pointer hardest and drift widest. Widths run 8–14%.
+        dz = round(1.35 - (w - 8) * 0.075, 3)
         nodes.append(
-            '<a class="node" style="--x:%d%%;--y:%d%%;--w:%d%%;--dur:%.1fs;--ph:%.1fs" href="work/%s/">'
-            % (x, y, w, drift, phase, p["slug"])
-            + '<span class="node__in">'
+            '<a class="node" style="--x:%d%%;--y:%d%%;--w:%d%%;--dz:%g" href="work/%s/">'
+            % (x, y, w, dz, p["slug"])
+            + '<span class="node__d"><span class="node__in">'
             + picture(p["slug"], h, "", alt, w)
             + '<span class="node__t">' + e(p["title"]) + "</span>"
-            + '<span class="node__m">' + e(p["place"]) + ", " + e(p["years"]) + "</span></span></a>")
+            + '<span class="node__m">' + e(p["place"]) + ", " + e(p["years"])
+            + "</span></span></span></a>")
         threads.append('<line x1="50" y1="50" x2="%d" y2="%d"/>' % (x, y))
 
     u, d = SITE["email"].split("@")
@@ -637,7 +878,7 @@ def render_home_v2():
         ("STORY", STORY),
         ("PLACE", e(SITE["location"])),
         ("MAIL_U", e(u)), ("MAIL_D", e(d)),
-        ("EYE", eye_mark()),
+        ("EYE", logo_mark("h", ox=LOGO_OFF, oy=0.0, cls="mark__svg")),
         ("THREADS", "\n  ".join(threads)),
         ("NODES", "\n  ".join(nodes)),
     ]:
@@ -788,6 +1029,7 @@ def main():
     for i, p in enumerate(PROJECTS):
         nxt = PROJECTS[(i + 1) % len(PROJECTS)]
         write(os.path.join(ROOT, "work", p["slug"], "index.html"), render_project(p, nxt))
+    write(os.path.join(ROOT, "lab", "logo3.html"), render_logo_lab())
     write(os.path.join(ROOT, "404.html"), NOT_FOUND)
     write(os.path.join(ROOT, "assets", "js", "site.js"), JS)
     open(os.path.join(ROOT, "CNAME"), "w").write(SITE["domain"] + "\n")

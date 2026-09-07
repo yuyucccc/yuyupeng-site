@@ -71,7 +71,7 @@ DNS can take anywhere from ten minutes to a few hours to take effect. The
 在文件上点右键 → 打开 → 再点「打开」。之后就可以直接双击了。
 
 logo 方案页不需要服务器，直接双击即可：
-`lab/logo2.html`（渐变版，现用）、`lab/logo.html`（转法与形态）
+`lab/logo3.html` —— 六种动画方案（用的是 `logo2.ai` 的矢量，现用 01）
 
 ## Changing the site later
 
