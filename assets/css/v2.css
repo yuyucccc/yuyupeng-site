@@ -272,7 +272,11 @@ body.work{overflow:auto;overflow-x:hidden}
    composed. The rhythm comes from the widths and the side, not from drift. */
 .w-inset{margin-left:0}
 .w-insetR,.w-wideR{margin-left:auto;margin-right:0}
+/* the two widths already add up to the row, so the gap is all that is left
+   to distribute; a shortened row hangs off one margin or the other */
 .wpair{display:flex;gap:4%;align-items:flex-start;justify-content:space-between}
+.wpair--left{justify-content:flex-start}
+.wpair--right{justify-content:flex-end}
 @media(max-width:60rem){
   .w-inset,.w-insetR,.w-wideR{margin-left:0;margin-right:0}
   .wpair{display:block}

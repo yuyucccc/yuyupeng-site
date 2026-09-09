@@ -501,18 +501,38 @@ def work_head(title, desc, rel, canonical):
 # the shape alone — the shape sets the ceiling, the aspect sets the rest.
 FIG_H = 52.0
 
-def _fig(p, im, rel, cls):
-    """One picture, sized from its own proportion, and its caption if she wrote one."""
+PAIR_GAP = 4.0      # % of the column between the two
+PAIR_H = 58.0       # tallest a paired row may stand, as a share of the column
+
+
+def _ratio(im):
+    return float(im["w"]) / float(im["h"]) if im.get("h") else 1.5
+
+
+def _fig(p, im, rel, cls, w=None):
+    """One picture and its caption, if she wrote one. Width comes from the
+    picture's own proportion unless the caller has already worked it out."""
     cap = p.get("captions", {}).get(im["file"].split(".")[0])
     alt = p["title"] + " " + EMD + " " + p["place"]
-    top = {"w-wide": 78, "w-wideR": 78, "w-inset": 62, "w-insetR": 62,
-           "w-a": 56, "w-b": 40, "w-eq": 48}.get(cls, 60)
-    ratio = float(im["w"]) / float(im["h"]) if im.get("h") else 1.5
-    w = min(top, FIG_H * ratio)
-    return ('<figure class="wfig ' + cls + '" style="width:%.1f%%">' % w
+    if w is None:
+        top = {"w-wide": 78, "w-wideR": 78, "w-inset": 62, "w-insetR": 62}.get(cls, 60)
+        w = min(top, FIG_H * _ratio(im))
+    return ('<figure class="wfig ' + cls + '" style="width:%.2f%%">' % w
             + picture(p["slug"], im, rel, alt, w)
             + ('<figcaption>' + e(cap) + '</figcaption>' if cap else '')
             + '</figure>')
+
+
+def _pair_widths(a, b):
+    """Two pictures side by side, sized so they stand at exactly the same
+    height: give each a width in proportion to its own aspect and both come out
+    level, top and bottom. Equal widths cannot do this — two pictures of
+    different proportion end up with ragged feet, which is what she saw."""
+    ra, rb = _ratio(a), _ratio(b)
+    h = (100.0 - PAIR_GAP) / (ra + rb)          # the row's height, in column %
+    if h > PAIR_H:                              # too tall: shrink both together
+        h = PAIR_H                              # so they stay level with each other
+    return h * ra, h * rb
 
 
 def render_project(p, nxt):
@@ -541,12 +561,15 @@ def render_project(p, nxt):
     if body:
         blocks.append('<p class="wpara">' + it(e(body.pop(0))) + '</p>')
     for gi, (shape, gims) in enumerate(groups):
-        if shape == "pair":
-            blocks.append('<div class="wpair">' + _fig(p, gims[0], rel, "w-a")
-                          + _fig(p, gims[1], rel, "w-b") + '</div>')
-        elif shape == "pairEq":
-            blocks.append('<div class="wpair wpair--eq">' + _fig(p, gims[0], rel, "w-eq")
-                          + _fig(p, gims[1], rel, "w-eq") + '</div>')
+        if shape in ("pair", "pairEq"):
+            wa, wb = _pair_widths(gims[0], gims[1])
+            # a full-width row needs no alignment; a shortened one takes a side,
+            # and takes the opposite side to the last one
+            side = "" if wa + wb + PAIR_GAP > 99.5 else (
+                " wpair--right" if shape == "pairEq" else " wpair--left")
+            blocks.append('<div class="wpair' + side + '">'
+                          + _fig(p, gims[0], rel, "w-a", wa)
+                          + _fig(p, gims[1], rel, "w-b", wb) + '</div>')
         else:
             blocks.append(_fig(p, gims[0], rel, "w-" + shape))
         # one paragraph after each group until they run out, so the text is
