@@ -18,7 +18,7 @@ otherwise the next step conflicts.
 ### 2. Push this folder to it
 
 ```bash
-cd /Users/uu/yuyupeng-site
+cd /Users/uu/Archive_Portfolio/website/yuyupeng-site
 git remote add origin https://github.com/USERNAME/yuyupeng-site.git
 git push -u origin main
 ```
@@ -83,7 +83,7 @@ generated and your changes would be overwritten.
 1. Edit `content.json`
 2. Regenerate:
    ```bash
-   cd /Users/uu/yuyupeng-site
+   cd /Users/uu/Archive_Portfolio/website/yuyupeng-site
    python3 build.py
    ```
 3. Preview locally at <http://localhost:8899>:
