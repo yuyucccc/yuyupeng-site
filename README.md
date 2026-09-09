@@ -99,6 +99,10 @@ generated and your changes would be overwritten.
 
 The live site updates about a minute after the push.
 
+首页左边的三行筛选（all / professional works / academic works）按 `content.json`
+里每个项目的 `group` 字段分组。要从首页拿掉一个项目，改 `build.py` 里
+`GALLERY` 那行的排除名单——被排除的项目连同它的项目页一起不再生成。
+
 ### Adding a project
 
 Add an object to the `projects` array in `content.json`, then put its images in

@@ -145,9 +145,11 @@ body.gallery .node:nth-child(10){transition-delay:.45s}
    .node__in scales under the pointer and on the click */
 .node__d{display:block;will-change:transform}
 .node__t,.node__m{display:block;
-  /* a narrow picture must not squeeze its label into three lines; the text is
-     allowed to run wider than the image it sits under */
-  width:max(100%,148px);}
+  /* a narrow picture must not squeeze its label into three lines, so the text
+     may run wider than the image — but only just. Every extra pixel here is
+     added to the footprint the drift has to keep clear of everything else,
+     and at 148px it was crowding the wall. */
+  width:max(100%,118px);}
 .node__t{margin-top:6px;font-size:10px;font-weight:700;
   letter-spacing:.13em;text-transform:uppercase;}
 .node__m{font-size:10px;color:var(--soft);letter-spacing:.04em}
@@ -219,3 +221,81 @@ body.zooming .node:not(.zoom),body.zooming .mark{
     align-items:center;justify-content:center;gap:30px;padding:90px var(--edge)}
 }
 @media(min-width:56.01rem){.frontwrap{display:contents}}
+
+
+/* ── a project ────────────────────────────────────────
+   After yazdanistudio.com: title and facts in a left column with the opening
+   picture beside them, then the page runs down as prose at a readable measure
+   with the pictures at deliberately unequal widths. The home page is one fixed
+   screen; this one scrolls, so body's overflow has to be given back. */
+body.work{overflow:auto;overflow-x:hidden}
+.whead{max-width:1500px;margin:0 auto;padding:var(--edge) var(--edge) 0}
+.work .wordmark{position:static;font-size:clamp(26px,3.2vw,44px);display:inline-block}
+.wrap{max-width:1500px;margin:0 auto;padding:0 var(--edge) clamp(60px,8vw,140px)}
+
+.wtop{display:grid;grid-template-columns:1fr;gap:clamp(24px,3vw,40px);
+  margin-top:clamp(38px,5vw,84px)}
+@media(min-width:60rem){.wtop{grid-template-columns:31fr 64fr;align-items:start}}
+.wtitle{font-size:clamp(24px,2.7vw,36px);font-weight:700;letter-spacing:-.015em;
+  line-height:1.08;margin:0 0 clamp(20px,2.4vw,34px)}
+.wtop__r{margin:0}
+/* a portrait opening plate must not run past the fold; it letterboxes to the
+   left of its column rather than being cropped */
+.wtop__r img{width:100%;height:auto;max-height:76vh;object-fit:contain;
+  object-position:left top}
+
+.facts{margin:0;display:grid;gap:.85em}
+.facts .frow{display:grid;grid-template-columns:8em 1fr;gap:1em;margin:0}
+.facts dt{font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--soft);margin:0}
+.facts dd{margin:0;font-size:13px;line-height:1.45}
+
+.wlead{font-size:clamp(20px,2.3vw,31px);line-height:1.25;letter-spacing:-.015em;
+  max-width:20em;margin:0;text-wrap:pretty}
+.wlead em{font-style:italic}
+.wpara{font-size:clamp(15px,1.15vw,17px);line-height:1.55;max-width:58ch;margin:0;
+  text-wrap:pretty}
+.wpara em{font-style:italic}
+.wnote{font-size:12px;line-height:1.5;color:var(--soft);max-width:48ch;margin:0;
+  border-left:2px solid var(--soft);padding-left:14px}
+
+.wfig{margin:0}
+.wfig img{width:100%;height:auto}
+.wfig figcaption{margin-top:11px;font-size:11px;line-height:1.5;color:var(--soft)}
+/* widths are written per picture by the generator, from its own proportion */
+.w-inset{margin-left:14%}
+.wpair{display:flex;gap:4%;align-items:flex-start}
+@media(max-width:60rem){
+  .w-inset{margin-left:0}
+  .wpair{display:block}
+  .wrap .wfig{width:100%!important}
+  .wpair .wfig + .wfig{margin-top:clamp(24px,5vw,40px)}
+}
+
+.wnext{display:flex;gap:clamp(16px,2vw,30px);align-items:flex-start;
+  border-top:1px solid rgba(0,0,0,.12);padding-top:clamp(22px,2.6vw,38px)}
+.wnext__i{flex:0 0 26%;max-width:340px}
+.wnext__i img{width:100%;height:auto}
+.wnext__t{display:block}
+.wnext__t .label{display:block;font-size:11px;font-weight:700;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--soft);margin-bottom:.5em}
+.wnext__t strong{display:block;font-size:clamp(19px,2vw,28px);font-weight:700;
+  letter-spacing:-.015em;line-height:1.1}
+.wnext__m{display:block;margin-top:.4em;font-size:12px;color:var(--soft)}
+.wnext:hover strong{text-decoration:underline;text-underline-offset:4px}
+
+.wfoot{max-width:1500px;margin:0 auto;padding:0 var(--edge) clamp(40px,5vw,70px)}
+.wmail{margin:0;font-size:11px;font-weight:700;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--soft)}
+.wmail a:hover{color:var(--ink)}
+
+/* The rhythm of the page, last so it beats the margin:0 each block sets on
+   itself — same specificity, and the later rule wins. One measure between
+   every block, wide enough that the page reads as a sequence of held moments
+   rather than a column of things. */
+/* only the vertical is reset — .w-inset earns its indent from margin-left */
+.wrap > *{margin-bottom:0}
+.wrap > * + *{margin-top:clamp(46px,6vw,112px)}
+/* prose that follows prose is a paragraph break, not a new movement */
+.wrap > .wpara + .wpara{margin-top:1.15em}
+.wrap > .wlead + .wpara,.wrap > .wnote + .wpara{margin-top:clamp(26px,3vw,44px)}

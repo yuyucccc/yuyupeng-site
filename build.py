@@ -441,108 +441,140 @@ def render_home():
 </main>
 {footer("")}"""
 
-# ── project page ────────────────────────────────────────────────────────
-# Not the index's scatter. A project opens as one main picture beside its
-# information, then runs down the page as aligned figures — reading a project
-# is a sequence, not a search. Nothing here is cropped except the opening
-# picture, which fills its half the way a full-bleed plate fills a page.
+# ── a project ───────────────────────────────────────────────────────────
+# After yazdanistudio.com: the title and the facts in a left column with the
+# opening picture beside them, then the page runs down as prose at a readable
+# measure with the pictures at deliberately unequal widths — wide, a pair of
+# two different sizes, one indented off the axis. Nothing is cropped and
+# nothing is uniform, which is the whole reason for the shape list below.
+
+WORK_SHAPES = ["wide", "pair", "inset", "pairEq"]
+
+
+def work_head(title, desc, rel, canonical):
+    return """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>%s</title>
+<meta name="description" content="%s">
+<link rel="canonical" href="%s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="%s">
+<meta property="og:description" content="%s">
+<meta property="og:url" content="%s">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="%s">
+<script>document.documentElement.className+=" js"</script>
+<link rel="stylesheet" href="%sassets/css/v2.css">
+</head>
+<body class="work">""" % (e(title), e(desc), e(canonical), e(title), e(desc),
+                          e(canonical), FAVICON_V2, rel)
+
+
+# How tall a picture is allowed to get, as a share of the column it sits in.
+# A portrait plate at a landscape plate's width would stand more than a screen
+# tall, so the width is taken from the picture's own proportion instead of from
+# the shape alone — the shape sets the ceiling, the aspect sets the rest.
+FIG_H = 52.0
+
+def _fig(p, im, rel, cls):
+    """One picture, sized from its own proportion, and its caption if she wrote one."""
+    cap = p.get("captions", {}).get(im["file"].split(".")[0])
+    alt = p["title"] + " " + EMD + " " + p["place"]
+    top = {"w-wide": 78, "w-inset": 62, "w-a": 56, "w-b": 40, "w-eq": 48}.get(cls, 60)
+    ratio = float(im["w"]) / float(im["h"]) if im.get("h") else 1.5
+    w = min(top, FIG_H * ratio)
+    return ('<figure class="wfig ' + cls + '" style="width:%.1f%%">' % w
+            + picture(p["slug"], im, rel, alt, w)
+            + ('<figcaption>' + e(cap) + '</figcaption>' if cap else '')
+            + '</figure>')
+
+
 def render_project(p, nxt):
-    ims  = imgs_for(p["slug"])
+    rel = "../../"
+    ims = imgs_for(p["slug"])
     hero = hero_of(p)
     rest = [i for i in ims if i is not hero]
-    caps = p.get("captions", {})
-    slug, T = p["slug"], p["title"]
 
-    def capof(i): return caps.get(i["file"].split(".")[0])
-    def im(i, eager=False, w_pct=50.0):
-        cap = capof(i)
-        alt = T + " " + EMD + " " + (cap if cap else "project drawing")
-        return picture(slug, i, "../../", alt, w_pct, eager)
-    def fig(i, cls, w_pct):
-        cap = capof(i)
-        fc = "<figcaption>" + it(e(cap)) + "</figcaption>" if cap else ""
-        return '<figure class="' + cls + ' rise">' + im(i, False, w_pct) + fc + "</figure>"
-
-    paras = list(p["body"])
-    lead_para = paras.pop(0) if paras else ""
-    note = ('<p class="blk blk--fine blk--soft" style="margin-top:1rem">'
-            + e(p["draft_note"]) + "</p>") if p.get("draft_note") else ""
-
-    # ── opening: picture left, information right ──
-    inset = rest.pop(0) if rest else None
-    inset_html = ""
-    if inset:
-        cap = capof(inset)
-        fc = "<figcaption>" + it(e(cap)) + "</figcaption>" if cap else ""
-        inset_html = ('<figure class="split__inset">' + im(inset, False, 29) + fc + "</figure>")
-    hero_html = ""
-    if hero:
-        hero_html = '<div class="split__img">' + im(hero, True, 50) + "</div>"
-
-    opening = ('<section class="split">' + hero_html
-        + '<div class="split__info">'
-        + '<p class="pkicker">' + e(p["place"]) + " &middot; " + e(p["years"]) + "</p>"
-        + '<h1 class="ptitle">' + e(T) + "</h1>"
-        + '<p class="plead">' + it(e(p["lead"])) + "</p>"
-        + inset_html
-        + '<div class="split__tail"><div class="blk">' + "<p>" + it(e(lead_para)) + "</p></div></div>"
-        + "</div></section>")
-
-    # ── the run: figures in a legible sequence, prose interleaved ──
-    blocks, i, flip, used_text = [], 0, False, 0
-    while i < len(rest):
-        a = rest[i]
-        ar = a["w"] / a["h"]
-        nx = rest[i + 1] if i + 1 < len(rest) else None
-        if paras and used_text < len(paras) and i % 2 == 1:
-            side = " withtext--flip" if flip else ""
-            blocks.append('<div class="withtext' + side + '">'
-                          + fig(a, "fig", 58)
-                          + '<div class="blk">' + "<p>" + it(e(paras[used_text])) + "</p>"
-                          + (note if used_text == len(paras) - 1 else "") + "</div></div>")
-            used_text += 1
-        elif ar >= 2.2:
-            blocks.append(fig(a, "fig", 92))
-        elif ar >= 1.5:
-            blocks.append(fig(a, "fig fig--w66" + (" fig--right" if flip else ""), 60))
-        elif nx and (nx["w"] / nx["h"]) < 1.5:
-            blocks.append('<div class="pair">' + fig(a, "fig", 44) + fig(nx, "fig", 44) + "</div>")
-            i += 1
+    # ── group the pictures into blocks of varied shape ──────────────────
+    groups, r = [], list(rest)
+    while r:
+        shape = WORK_SHAPES[len(groups) % len(WORK_SHAPES)]
+        if shape in ("pair", "pairEq") and len(r) >= 2:
+            groups.append((shape, [r.pop(0), r.pop(0)]))
         else:
-            blocks.append(fig(a, "fig fig--w50" + (" fig--right" if flip else ""), 45))
-        flip = not flip
-        i += 1
+            groups.append(("wide" if shape in ("pair", "pairEq") else shape, [r.pop(0)]))
 
-    while used_text < len(paras):
-        blocks.append('<div class="blk rise">' + "<p>" + it(e(paras[used_text])) + "</p>"
-                      + (note if used_text == len(paras) - 1 else "") + "</div>")
-        used_text += 1
-    if not paras and note:
-        blocks.append('<div class="blk rise">' + note + "</div>")
+    # ── the prose, spread through them rather than stacked at the top ───
+    body = [x for x in p.get("body", []) if x]
+    blocks = []
+    if body:
+        blocks.append('<p class="wpara">' + it(e(body.pop(0))) + '</p>')
+    for gi, (shape, gims) in enumerate(groups):
+        if shape == "pair":
+            blocks.append('<div class="wpair">' + _fig(p, gims[0], rel, "w-a")
+                          + _fig(p, gims[1], rel, "w-b") + '</div>')
+        elif shape == "pairEq":
+            blocks.append('<div class="wpair wpair--eq">' + _fig(p, gims[0], rel, "w-eq")
+                          + _fig(p, gims[1], rel, "w-eq") + '</div>')
+        else:
+            blocks.append(_fig(p, gims[0], rel, "w-" + shape))
+        # one paragraph after each group until they run out, so the text is
+        # threaded through the pictures instead of front-loaded
+        if body and gi < len(groups) - 1:
+            blocks.append('<p class="wpara">' + it(e(body.pop(0))) + '</p>')
+    for x in body:
+        blocks.append('<p class="wpara">' + it(e(x)) + '</p>')
 
-    facts = "".join('<div class="frow"><dt>' + e(k) + "</dt><dd>" + it(e(v)) + "</dd></div>"
-                    for k, v in p["meta"])
-    blocks.append('<dl class="facts rise">' + facts + "</dl>")
-    run = '<section class="run">' + "".join(blocks) + "</section>"
+    # ── the facts, her own labels ───────────────────────────────────────
+    facts = [("Place", p["place"]), ("Year", p["years"])]
+    facts += [(a, b) for a, b in p.get("meta", []) if a.lower() not in ("date",)]
+    rows = "".join('<div class="frow"><dt>%s</dt><dd>%s</dd></div>'
+                   % (e(a), e(b)) for a, b in facts)
 
-    return f"""{head(f"{p['title']} {EMD} {SITE['name']}", p['lead'], "../../", f"https://{SITE['domain']}/work/{p['slug']}/")}
-<main class="wrap">
-{masthead("../../")}
- <article>
-  <p style="margin:0 0 var(--gut)"><a class="back back--onground" href="../../">{ARROW_BACK}<span>All work</span></a></p>
-  {opening}
-  {run}
-  <a class="next panel panel--flush" href="../{nxt['slug']}/">
-   <span>
-    <span class="label">Next project</span>
-    <strong style="display:block;margin-top:.3rem">{e(nxt['title'])}</strong>
-   </span>
-   {ARROW}
-  </a>
- </article>
-</main>
-{footer("../../")}"""
+    note = ''
+    if p.get("draft_note"):
+        note = '<p class="wnote">' + e(p["draft_note"]) + '</p>'
 
+    nx = ''
+    if nxt:
+        nh = hero_of(nxt)
+        nx = ('<a class="wnext" href="' + rel + 'work/' + nxt["slug"] + '/">'
+              + ('<span class="wnext__i">'
+                 + picture(nxt["slug"], nh, rel, nxt["title"], 26) + '</span>' if nh else '')
+              + '<span class="wnext__t"><span class="label">Next project</span>'
+              + '<strong>' + e(nxt["title"]) + '</strong>'
+              + '<span class="wnext__m">' + e(nxt["place"]) + ", " + e(nxt["years"])
+              + '</span></span></a>')
+
+    u, d = SITE["email"].split("@")
+    canonical = "https://" + SITE["domain"] + "/work/" + p["slug"] + "/"
+    desc = p.get("lead") or (p["title"] + " " + EMD + " " + p["place"])
+
+    return (work_head(p["title"] + " " + EMD + " " + SITE["name"], desc, rel, canonical)
+            + '\n<header class="whead"><a class="wordmark" href="' + rel + '">YUYUPENG</a></header>\n'
+            + '<main class="wrap">\n'
+            + '  <section class="wtop">\n'
+            + '    <div class="wtop__l"><h1 class="wtitle">' + e(p["title"]) + '</h1>'
+            + '<dl class="facts">' + rows + '</dl></div>\n'
+            + ('    <figure class="wtop__r">'
+               + picture(p["slug"], hero, rel, p["title"], 58, eager=True)
+               + '</figure>\n' if hero else '')
+            + '  </section>\n'
+            + ('  <p class="wlead">' + it(e(p["lead"])) + '</p>\n' if p.get("lead") else '')
+            + note
+            + "\n  ".join(blocks) + "\n"
+            + nx
+            + '</main>\n'
+            + '<footer class="wfoot"><p class="wmail">'
+            + '<a class="js-mail" href="#" data-u="' + e(u) + '" data-d="' + e(d) + '">'
+            + '<span class="js-mail-txt">' + e(u) + '&#8203;<span aria-hidden="true"> [at] </span>'
+            + '<span class="sr">@</span>&#8203;' + e(d) + '</span></a></p></footer>\n'
+            + '<div class="dot" id="dot" aria-hidden="true"></div>\n'
+            + '<script src="' + rel + 'assets/js/v2.js" defer></script>\n'
+            + '</body>\n</html>\n')
 
 
 # ── the mark ────────────────────────────────────────────────────────────
@@ -694,14 +726,17 @@ def logo_mark(idp="m", forms=(1, 2, 3), ox=0.0, oy=0.0, cls="mark__svg",
 GALLERY = [s for s in [p["slug"] for p in PROJECTS]
            if s not in ("tuin-van-overhoeks", "kei-3-0", "kloppend-hart-soest")]
 
-# centre x%, centre y%, width% — a loose ring around the mark, sizes varied
-# hard. Held off the margins by about the distance the motion can travel, so a
-# picture near an edge still has somewhere to go and does not spend its life
-# pinned against the glass. The furniture — the name, the two filters, the
-# address — is kept clear by the script, not by these numbers.
-NODES = [(29, 19, 13), (47, 13, 10), (64, 18, 12), (80, 27,  9),
-         (87, 47, 11), (83, 68, 10), (67, 81, 12), (50, 85,  9),
-         (33, 78, 13), (16, 67, 10), (14, 31, 11), (33, 42,  8)]
+# centre x%, centre y%, width% — where each picture would like to hang. These
+# are wants, not places: the script keeps the pictures off each other and off
+# the furniture, so authoring three of them almost on top of one another is how
+# you ask for a cluster. Three clusters and four singles, on the reference,
+# with a lot of empty wall in between.
+#
+# Nothing is authored left of 29%: the filters own that column.
+NODES = [(31, 19,  9), (40, 17,  7), (33, 31,  8),     # cluster, upper left
+         (79, 25,  8), (87, 39,  7),                   # cluster, right
+         (50, 79,  9), (60, 82,  7), (41, 81,  8),     # cluster, lower centre
+         (71, 22, 10), (88, 63,  8), (30, 57,  7), (67, 54, 6)]
 
 FAVICON_V2 = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
               "viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23fff'/%3E"
@@ -907,8 +942,12 @@ def write(path, s):
 
 def main():
     write(os.path.join(ROOT, "index.html"), render_home_v2())
-    for i, p in enumerate(PROJECTS):
-        nxt = PROJECTS[(i + 1) % len(PROJECTS)]
+    # only what the gallery shows: a page for a project she pulled would be
+    # unreachable, and "next project" must not walk into one
+    idx = {q["slug"]: q for q in PROJECTS}
+    shown = [idx[s] for s in GALLERY if s in idx]
+    for i, p in enumerate(shown):
+        nxt = shown[(i + 1) % len(shown)]
         write(os.path.join(ROOT, "work", p["slug"], "index.html"), render_project(p, nxt))
     write(os.path.join(ROOT, "404.html"), NOT_FOUND)
     write(os.path.join(ROOT, "assets", "js", "site.js"), JS)
@@ -917,12 +956,12 @@ def main():
     open(os.path.join(ROOT, "robots.txt"), "w").write(
         f"User-agent: *\nAllow: /\nSitemap: https://{SITE['domain']}/sitemap.xml\n")
     urls = [f"https://{SITE['domain']}/"] + [
-        f"https://{SITE['domain']}/work/{p['slug']}/" for p in PROJECTS]
+        f"https://{SITE['domain']}/work/{p['slug']}/" for p in shown]
     sm = "\n".join(f"  <url><loc>{u}</loc></url>" for u in urls)
     open(os.path.join(ROOT, "sitemap.xml"), "w").write(
         f'<?xml version="1.0" encoding="UTF-8"?>\n'
         f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{sm}\n</urlset>\n')
-    print(f"built  index.html + {len(PROJECTS)} project pages + 404 + sitemap")
+    print(f"built  index.html + {len(shown)} project pages + 404 + sitemap")
 
 if __name__ == "__main__":
     main()

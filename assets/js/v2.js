@@ -19,7 +19,7 @@
     body.classList.add('gallery');
     startField();
   }
-  mark.addEventListener('click', open);
+  if (mark) mark.addEventListener('click', open);
 
   // ── the constellation drifts ─────────────────────────────────────────
   // Each picture wanders on two slow sines per axis, at periods that do not
@@ -30,7 +30,7 @@
   // Computed here rather than in CSS keyframes because the pictures have to
   // be kept off each other, which needs all ten positions in one place.
   var DRIFT  = 0.055;   // of the window's short side, at full depth
-  var EDGE   = 12;      // px of window margin a picture may never cross
+  var EDGE   = 0.06;    // white margin all round, as a share of the short side
   var GAP    = 1.03;    // how close two footprints may come, 1 = exactly touching
 
   var still = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -66,6 +66,17 @@
     lo = Math.min(lo, -1); return lo * Math.tanh(v / lo);
   }
 
+  // The travel a picture may make from where it was authored, given that its
+  // whole footprint has to stay inside [lo, hi]. The anchor is pulled into that
+  // band first: soft() needs room on both sides of it, and a picture authored
+  // past the margin — a tall one hung near the top — would otherwise be handed
+  // a one-sided range, quietly lose its limit, and hang off the edge.
+  function anchored(want, home, lo, hi) {
+    if (hi < lo) { var mid = (lo + hi) / 2; lo = hi = mid; }
+    var a = Math.min(Math.max(home, lo), hi);
+    return (a - home) + soft(want - a, lo - a, hi - a);
+  }
+
   // A caption is allowed to run wider than the picture it sits under, so the
   // element's own box under-reports the footprint and two projects can collide
   // while their boxes say they are clear. Measure the union of the picture and
@@ -95,16 +106,28 @@
   // line that says which half of the work you are looking at. Re-read every
   // few frames: the mark is still shrinking, and the filters still fading in,
   // for most of a second after the gallery opens.
-  var FURNITURE = ['.wordmark', '.side', '.corner--br', '.mark'], furn = [];
+  // The filters are given the whole left column rather than the box their
+  // letters happen to fill — she asked for pictures to stay out of that region,
+  // and a picture stopping a few pixels short of the words still reads as
+  // crowding them.
+  var FURNITURE = [
+    { q: '.wordmark',   px: 18, py: 18 },
+    { q: '.side',       px: 38, py: 52, column: true },
+    { q: '.corner--br', px: 18, py: 18 },
+    { q: '.mark',       px: 12, py: 12 }
+  ];
+  var furn = [];
   function measureFurniture() {
     furn.length = 0;
     for (var k = 0; k < FURNITURE.length; k++) {
-      var el = document.querySelector(FURNITURE[k]);
+      var f = FURNITURE[k], el = document.querySelector(f.q);
       if (!el) continue;
       var r = el.getBoundingClientRect();
       if (!r.width || !r.height) continue;
-      furn.push({ cx: r.left + r.width / 2, cy: r.top + r.height / 2,
-                  hw: r.width / 2 + 10, hh: r.height / 2 + 10 });
+      var l = r.left - f.px, rt = r.right + f.px;
+      if (f.column) l = Math.min(l, 0);       // out to the window's edge
+      furn.push({ cx: (l + rt) / 2, cy: r.top + r.height / 2,
+                  hw: (rt - l) / 2, hh: r.height / 2 + f.py });
     }
   }
 
@@ -114,6 +137,7 @@
     if (!running) return;
     var w = window.innerWidth, h = window.innerHeight;
     var S = Math.min(w, h), t = now / 1000, i, n;
+    var edge = Math.max(40, S * EDGE);
 
     // 1 — where each picture wants to be, wider for the small ones
     for (i = 0; i < nodes.length; i++) {
@@ -136,7 +160,12 @@
     var act = [];
     for (i = 0; i < nodes.length; i++) if (nodes[i].on) act.push(i);
 
-    for (var pass = 0; pass < 3; pass++) {
+    // The wall is relaxed together with the rest, not applied afterwards: a
+    // tall picture hung near the top cannot move up, so if separation is
+    // resolved first and the margin imposed second, the margin simply pushes
+    // it back into its neighbour and the overlap never clears. Inside the loop
+    // the next pass sees the true position and separates along the other axis.
+    for (var pass = 0; pass < 8; pass++) {
       for (var a = 0; a < act.length; a++) {
         i = act[a];
         for (var b = a + 1; b < act.length; b++) {
@@ -163,15 +192,23 @@
           if (fx / fw < fy / fh) X[i] += (X[i] >= F.cx ? 1 : -1) * fx;
           else                   Y[i] += (Y[i] >= F.cy ? 1 : -1) * fy;
         }
+
+        var hx = nodes[i].x * w / 100 + nodes[i].ox;
+        var hy = nodes[i].y * h / 100 + nodes[i].oy;
+        X[i] = hx + anchored(X[i], hx, edge + nodes[i].hw, w - edge - nodes[i].hw);
+        Y[i] = hy + anchored(Y[i], hy, edge + nodes[i].hh, h - edge - nodes[i].hh);
       }
     }
 
-    // 3 — the window's edge, eased rather than clipped, then draw
+    // 3 — draw. Anything filtered out was never relaxed, so it is still held
+    //     to the wall here, ready for when it comes back.
     for (i = 0; i < nodes.length; i++) {
       n = nodes[i];
       var ux = n.x * w / 100 + n.ox, uy = n.y * h / 100 + n.oy;
-      var dx = soft(X[i] - ux, EDGE + n.hw - ux, w - EDGE - n.hw - ux);
-      var dy = soft(Y[i] - uy, EDGE + n.hh - uy, h - EDGE - n.hh - uy);
+      var dx = n.on ? X[i] - ux
+                    : anchored(X[i], ux, edge + n.hw, w - edge - n.hw);
+      var dy = n.on ? Y[i] - uy
+                    : anchored(Y[i], uy, edge + n.hh, h - edge - n.hh);
 
       n.d.style.transform = 'translate3d(' + dx.toFixed(2) + 'px,' + dy.toFixed(2) + 'px,0)';
     }
@@ -186,20 +223,19 @@
     requestAnimationFrame(frame);
   }
 
-  // ── the two filters ──────────────────────────────────────────────────
-  // Both on to begin with. Clicking a line shows that half alone; clicking it
-  // again, when it is already the only one showing, brings everything back. So
-  // the pair can never both be off, and there is always a way back to all of it.
-  var showing = { professional: true, academic: true };
+  // ── the three filters ────────────────────────────────────────────────
+  // One of three, never a pair of toggles: all, or one half. "all" starts lit,
+  // so the page opens on everything and there is always one line to come back to.
+  var showing = 'all';
   var filters = [].slice.call(document.querySelectorAll('.side__b'));
 
   function applyFilter() {
     nodes.forEach(function (n) {
-      n.on = !!showing[n.group];
+      n.on = showing === 'all' || n.group === showing;
       n.el.classList.toggle('node--off', !n.on);
     });
     filters.forEach(function (b) {
-      var lit = !!showing[b.getAttribute('data-group')];
+      var lit = b.getAttribute('data-show') === showing;
       b.classList.toggle('is-on', lit);
       b.setAttribute('aria-pressed', lit ? 'true' : 'false');
     });
@@ -207,17 +243,13 @@
 
   filters.forEach(function (b) {
     b.addEventListener('click', function () {
-      var g = b.getAttribute('data-group');
-      var alone = showing[g] && Object.keys(showing).every(function (k) {
-        return k === g || !showing[k];
-      });
-      Object.keys(showing).forEach(function (k) { showing[k] = alone || k === g; });
+      showing = b.getAttribute('data-show');
       applyFilter();
     });
   });
   applyFilter();
 
-  if (wantGallery) {
+  if (wantGallery && mark) {
     body.classList.remove('front'); body.classList.add('gallery'); startField();
   }
 
