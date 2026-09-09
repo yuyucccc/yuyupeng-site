@@ -527,8 +527,7 @@
           "Inge Bobbink"
         ]
       ],
-      "captions": {},
-      "draft_note": "本项目原 PDF 里没有正文，这段是我根据图纸和副标题写的草稿"
+      "captions": {}
     },
     {
       "slug": "beautiful-decay",
@@ -560,7 +559,7 @@
         ]
       ],
       "captions": {},
-      "draft_note": "正文是我根据原书 p58/p59 的零散文字和图纸重写的草稿"
+      "hero": "collage.jpg"
     },
     {
       "slug": "circular-community",
@@ -590,8 +589,7 @@
       "captions": {
         "06": "Detailed plan — water square",
         "07": "Detailed plan — A20 green carpet"
-      },
-      "draft_note": "正文是我根据图纸标题写的草稿"
+      }
     }
   ]
 }

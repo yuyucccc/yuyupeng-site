@@ -587,10 +587,6 @@ def render_project(p, nxt):
     rows = "".join('<div class="frow"><dt>%s</dt><dd>%s</dd></div>'
                    % (e(a), e(b)) for a, b in facts)
 
-    note = ''
-    if p.get("draft_note"):
-        note = '<p class="wnote">' + e(p["draft_note"]) + '</p>'
-
     nx = ''
     if nxt:
         nh = hero_of(nxt)
@@ -621,7 +617,6 @@ def render_project(p, nxt):
                + '</figure>\n' if hero else '')
             + '  </section>\n'
             + ('  <p class="wlead">' + it(e(p["lead"])) + '</p>\n' if p.get("lead") else '')
-            + note
             + "\n  ".join(blocks) + "\n"
             + nx
             + '</main>\n'
