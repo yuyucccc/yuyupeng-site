@@ -15,6 +15,7 @@
 <script>document.documentElement.className+=" js"</script>
 <link rel="preload" href="assets/fonts/PlayfairDisplay-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/v2.css">
+<script src="assets/js/personal-logo-fusion.js" defer></script>
 </head>
 <body class="front">
 
@@ -24,7 +25,8 @@
   <p class="story">{{STORY}}</p>
 
   <button class="mark" id="mark" type="button" aria-label="Open the work">
-    {{EYE}}
+    <personal-logo-fusion duration="6" minimum="0.32" fill-strength="0.75"
+      >{{EYE}}</personal-logo-fusion>
   </button>
 
   <p class="hint">Click</p>

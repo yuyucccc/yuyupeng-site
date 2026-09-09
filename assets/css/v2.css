@@ -83,36 +83,26 @@ body.gallery .story{opacity:0;pointer-events:none}
    fixed circular clip, which is what reads as a sphere rotating in its shell. */
 .mark{
   position:fixed;left:50%;top:50%;z-index:25;
-  /* 352 x 340 — the drawing's own box, wide enough to hold form 3's halo */
-  width:var(--mark,300px);height:calc(var(--mark,300px) * .9659);
-  margin:calc(var(--mark,300px) * -.483) 0 0 calc(var(--mark,300px) * -.5);
+  /* 420 x 310 — the box her animation is drawn in, wide enough for the ring
+     to swing through its own perspective without clipping */
+  width:var(--mark,300px);height:calc(var(--mark,300px) * .7381);
+  margin:calc(var(--mark,300px) * -.369) 0 0 calc(var(--mark,300px) * -.5);
   appearance:none;border:0;background:none;padding:0;cursor:pointer;
   transition:width .95s var(--ease),height .95s var(--ease),margin .95s var(--ease);
 }
-body.front .mark{--mark:clamp(280px,31vw,468px)}
-body.gallery .mark{--mark:clamp(122px,11.5vw,174px);cursor:default}
-.mark__svg{width:100%;height:100%;display:block;overflow:visible}
+/* Sized so the drawing inside comes out the same width it did before: the
+   artwork fills 67% of this box against 80% of the old one. */
+body.front .mark{--mark:clamp(330px,37vw,560px)}
+body.gallery .mark{--mark:clamp(146px,13.7vw,208px);cursor:default}
 
-/* The mark, animated: variant 01 out of lab/logo3.html. Her file holds three
-   forms of one object — wire, filled, inverted — so the animation only plays
-   them in turn. Nothing is ever stretched or recoloured: at every instant what
-   is on screen is exactly one of the drawings, and the two circles never move.
-   A negative delay runs a form ahead, so form k needs -(3-k)/3 of a cycle to
-   land in its own third, and each fade-out is met by the next fade-in. */
-.mark__svg .f,.mark__svg .turn{transform-box:view-box;transform-origin:50% 50%}
-.mark__svg .f{animation:markcycle var(--cyc,16s) linear infinite}
-.mark__svg .f2{animation-delay:calc(var(--cyc,16s) / -3 * 2)}
-.mark__svg .f3{animation-delay:calc(var(--cyc,16s) / -3)}
-@keyframes markcycle{
-  0%{opacity:1} 24.33%{opacity:1} 33.33%{opacity:0}
-  91%{opacity:0} 100%{opacity:1}
-}
-/* the burn runs the whole cycle through in the time the film flickers */
-body.filming .mark__svg{--cyc:2.6s}
-@media(prefers-reduced-motion:reduce){
-  .mark__svg .f{animation:none}
-  .mark__svg .f2,.mark__svg .f3{opacity:0}
-}
+/* The mark is her own animation, dropped in as a custom element: the outer ring
+   turns about the horizontal axis in perspective while the filled core breathes
+   in and out. It pauses itself off-screen, on a hidden tab, and under reduced
+   motion. The SVG inside it is the no-script fallback — a custom element stops
+   rendering its light children the moment it upgrades, so this shows only if
+   the script never arrives. */
+personal-logo-fusion{display:block;width:100%;height:100%}
+.mark__still{width:100%;height:100%;display:block;overflow:visible}
 
 /* ── threads and projects ─────────────────────────── */
 .threads{

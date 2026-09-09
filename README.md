@@ -70,8 +70,10 @@ DNS can take anywhere from ten minutes to a few hours to take effect. The
 第一次双击如果 macOS 提示「无法打开，因为它来自身份不明的开发者」：
 在文件上点右键 → 打开 → 再点「打开」。之后就可以直接双击了。
 
-logo 方案页不需要服务器，直接双击即可：
-`lab/logo3.html` —— 六种动画方案（用的是 `logo2.ai` 的矢量，现用 01）
+首页中间的 logo 动画是 `assets/js/personal-logo-fusion.js`（你自己做的组件）。
+参数写在 `templates/home.html` 的 `<personal-logo-fusion>` 标签上：
+`duration` 每圈秒数、`minimum` 收缩到的比例、`fill-strength` 不透明度。
+改完跑 `python3 build.py`。
 
 ## Changing the site later
 
@@ -117,7 +119,8 @@ image is used.
 | `content.json` | **all the text** — the only file you normally edit |
 | `build.py` | generates the HTML |
 | `assets/img/manifest.json` | image list with dimensions |
-| `assets/css/site.css` | all styling |
+| `assets/css/v2.css` | all styling |
+| `assets/js/personal-logo-fusion.js` | the logo animation, her own component |
 | `assets/fonts/` | Instrument Sans, self-hosted (SIL Open Font License) |
 | `PRODUCT.md` / `DESIGN.md` | why the site is built the way it is |
 | `CNAME` | the custom domain — required by GitHub Pages |

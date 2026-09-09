@@ -636,7 +636,8 @@ def _lit(idp, key, d, gid, width=None):
             % (m, cut, m, key, gid))
 
 
-def logo_mark(idp="m", forms=(1, 2, 3), ox=0.0, oy=0.0, cls="mark__svg"):
+def logo_mark(idp="m", forms=(1, 2, 3), ox=0.0, oy=0.0, cls="mark__svg",
+              vb="-176 -170 352 340"):
     """Her three forms in one SVG, each in its own layer so CSS can cross-fade,
     stack or gate them. ox/oy pushes the gradient centres off the middle: at 0,0
     every form is pixel-for-pixel the drawing she handed over, and an orbit has
@@ -674,138 +675,8 @@ def logo_mark(idp="m", forms=(1, 2, 3), ox=0.0, oy=0.0, cls="mark__svg"):
                          _lit(idp, "3a", BODY, idp + "3ag"),
                          _lit(idp, "3b", RING, idp + "3bg", 2)))
 
-    return ('<svg class="%s" viewBox="-176 -170 352 340" color="%s" aria-hidden="true">'
-            '<defs>%s</defs>%s</svg>' % (cls, ink, "".join(g), "".join(layers)))
-
-
-# ── logo lab ────────────────────────────────────────────────────────────
-# Six ways to animate the three forms, side by side, so she can pick one by
-# number. Every one uses the real vector — none of them redraw anything.
-
-VARIANTS = [
-    ("cycle", "1 &rarr; 2 &rarr; 3, cross-fading",
-     "The three forms are one object turning into the light, so it just plays "
-     "them in order. Nothing is ever distorted &mdash; at every instant what is "
-     "on screen is exactly one of your drawings."),
-    ("states", "still / hover / press",
-     "Form 1 at rest, form 2 when the pointer is on it, form 3 while pressed. "
-     "No loop: it only moves when you do. The most like a real lens."),
-    ("stack", "all three at once",
-     "The three forms overlap at reduced weight, each turning its light at its "
-     "own rate. Reads as depth rather than as a sequence."),
-    ("iris", "the aperture breathes",
-     "Form 2 alone. The outline never moves; the lit core opens and closes "
-     "inside it, the way an aperture does."),
-    ("turn", "the light orbits",
-     "Form 2 alone, the gradient centre pushed off the middle and orbiting. "
-     "The 2D silhouette is frozen and the inside turns in 3D &mdash; the thing "
-     "you asked for, at its plainest."),
-    ("cycleturn", "1 &rarr; 2 &rarr; 3, and the light orbits",
-     "The cross-fade with the orbit under it. The fullest version, and the one "
-     "that departs furthest from the flat drawing."),
-]
-
-LAB_CSS = """
-:root{--paper:#fff;--ink:rgb(55,55,55);--soft:#8a8a8a;--sp:14s}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:#111;
-  font:13px/1.55 Helvetica,"Helvetica Neue",Arial,sans-serif;padding:38px 40px 90px}
-h1{font-size:15px;font-weight:700;letter-spacing:-.01em;margin:0 0 4px}
-.sub{color:var(--soft);margin:0 0 34px;max-width:62ch;font-size:12px}
-.grid{display:grid;gap:34px 26px;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));max-width:1320px}
-.cell{min-width:0}
-.stage{aspect-ratio:1/.92;display:grid;place-items:center;border:1px solid #ececec}
-.mark__svg{width:88%;height:88%;overflow:visible;display:block}
-.no{font:700 11px/1 Helvetica,Arial,sans-serif;letter-spacing:.1em;color:#111;
-  display:inline-block;margin:13px 0 3px}
-.nm{font-size:12px;color:#111;margin:0 0 4px}
-.d{font-size:11.5px;line-height:1.5;color:var(--soft);margin:0}
-.ctl{position:fixed;right:22px;bottom:20px;background:#fff;border:1px solid #e4e4e4;
-  padding:9px 13px;font-size:11px;color:var(--soft);display:flex;gap:11px;align-items:center}
-.ctl input{width:132px}
-
-/* Every form sits in the same box, so a cross-fade never shifts anything.
-   transform-box:view-box is what makes 50% 50% mean the centre of the viewBox,
-   which is the centre of the mark; without it the percentages resolve against
-   the 640pt plate and an orbit throws the gradient out of frame. */
-.f,.turn{transform-box:view-box;transform-origin:50% 50%}
-
-/* 1 — cross-fade through the three drawings.
-   A negative delay runs a form ahead, so form k needs -(3-k)/3 of a cycle to
-   land in its own third. Each fade-out is met exactly by the next fade-in. */
-.v-cycle .f,.v-cycleturn .f{animation:xf var(--sp) linear infinite}
-.v-cycle .f2,.v-cycleturn .f2{animation-delay:calc(var(--sp) / -3 * 2)}
-.v-cycle .f3,.v-cycleturn .f3{animation-delay:calc(var(--sp) / -3)}
-@keyframes xf{
-  0%{opacity:1} 24.33%{opacity:1} 33.33%{opacity:0}
-  91%{opacity:0} 100%{opacity:1}
-}
-
-/* 2 — the forms answer the pointer instead of a clock */
-.v-states .f2,.v-states .f3{opacity:0}
-.v-states .f,.v-states .f2,.v-states .f3{transition:opacity .5s cubic-bezier(.16,1,.3,1)}
-.v-states:hover .f1{opacity:0}
-.v-states:hover .f2{opacity:1}
-.v-states:active .f2{opacity:0}
-.v-states:active .f3{opacity:1}
-
-/* 3 — the three held together, each turning at its own rate. Form 3 is painted
-   first: it carries an opaque knockout, and on top it would wipe the other two. */
-.v-stack .f1{opacity:.95}
-.v-stack .f2{opacity:.3}
-.v-stack .f3{opacity:.45}
-.v-stack .turn{animation:orbit calc(var(--sp) * 1.4) linear infinite}
-.v-stack .f2 .turn{animation-duration:calc(var(--sp) * .8);animation-direction:reverse}
-.v-stack .f3 .turn{animation-duration:calc(var(--sp) * 2.1)}
-
-/* 4 — the aperture breathes inside a frozen outline */
-.v-iris .turn--2a{animation:iris calc(var(--sp) * .55) ease-in-out infinite}
-@keyframes iris{0%,100%{transform:scale(1)}50%{transform:scale(.42)}}
-
-/* 5 — the light orbits: 2D frozen, 3D turning */
-.v-turn .turn,.v-cycleturn .turn{animation:orbit var(--sp) linear infinite}
-
-/* the plate carrying the gradient swings its offset centre around the middle */
-@keyframes orbit{to{transform:rotate(360deg)}}
-
-@media(prefers-reduced-motion:reduce){.f,.turn{animation:none!important}}
-"""
-
-
-def render_logo_lab():
-    cells = []
-    for i, (key, name, why) in enumerate(VARIANTS, 1):
-        forms = (2,) if key in ("iris", "turn") else (
-            (3, 1, 2) if key == "stack" else (1, 2, 3))
-        # the orbiting variants need the gradient centre off the middle, or
-        # spinning a centred radial gradient would show nothing at all
-        off = 26.0 if key in ("stack", "turn", "cycleturn") else 0.0
-        svg = logo_mark("v%d" % i, forms=forms, ox=off, oy=0.0)
-        cells.append(
-            '<div class="cell"><div class="stage v-%s">%s</div>'
-            '<span class="no">%02d</span>'
-            '<p class="nm">%s</p><p class="d">%s</p></div>' % (key, svg, i, name, why))
-
-    return ("""<!doctype html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Logo animation &mdash; six ways</title>
-<style>%s</style></head><body>
-<h1>Six ways to animate the mark</h1>
-<p class="sub">All six use the vector out of <b>logo2.ai</b> &mdash; the curves and the
-gradients are read from the file, not redrawn. The ink is your CMYK black as it
-converts for screen, rgb(55,55,55). Tell me a number.</p>
-<div class="grid">%s</div>
-<div class="ctl"><span>speed</span>
-<input id="sp" type="range" min="4" max="30" value="14" step="1">
-<span id="spv">14s</span></div>
-<script>
-var sp=document.getElementById('sp'),spv=document.getElementById('spv');
-sp.addEventListener('input',function(){
-  document.documentElement.style.setProperty('--sp',sp.value+'s');
-  spv.textContent=sp.value+'s';});
-</script>
-</body></html>""" % (LAB_CSS, "\n".join(cells)))
+    return ('<svg class="%s" viewBox="%s" color="%s" aria-hidden="true">'
+            '<defs>%s</defs>%s</svg>' % (cls, vb, ink, "".join(g), "".join(layers)))
 
 
 # ── v2 home: front + gallery on one page ────────────────────────────────
@@ -816,12 +687,6 @@ sp.addEventListener('input',function(){
 # Every project is a real <a> with real text in the source from the start. It is
 # only *positioned* by CSS, never injected by script, so a crawler and a screen
 # reader both get the whole list even though the page looks like a canvas.
-
-# The home page wears variant 01 of lab/logo3.html; the cross-fade itself is in
-# v2.css. LOGO_OFF pushes the gradient centres off the middle, which only the
-# orbiting variants need — at 0 the mark is pixel-for-pixel the drawing in
-# logo2.ai, which is what variant 01 wants.
-LOGO_OFF = 0.0
 
 GALLERY = ["kameleon-speelplaats", "kei-3-0", "van-eysingalaan", "city-nieuwegein",
            "groene-zoom", "parkstraat", "kloppend-hart-soest", "jaarbeursplein",
@@ -878,7 +743,11 @@ def render_home_v2():
         ("STORY", STORY),
         ("PLACE", e(SITE["location"])),
         ("MAIL_U", e(u)), ("MAIL_D", e(d)),
-        ("EYE", logo_mark("h", ox=LOGO_OFF, oy=0.0, cls="mark__svg")),
+        # Light-DOM children of a custom element stop rendering the moment it
+        # upgrades, so this is the mark with no script: form 1, framed in the
+        # component's own box so nothing shifts when the animation takes over.
+        ("EYE", logo_mark("h", forms=(1,), cls="mark__still",
+                          vb="-210 -155 420 310")),
         ("THREADS", "\n  ".join(threads)),
         ("NODES", "\n  ".join(nodes)),
     ]:
@@ -1029,7 +898,6 @@ def main():
     for i, p in enumerate(PROJECTS):
         nxt = PROJECTS[(i + 1) % len(PROJECTS)]
         write(os.path.join(ROOT, "work", p["slug"], "index.html"), render_project(p, nxt))
-    write(os.path.join(ROOT, "lab", "logo3.html"), render_logo_lab())
     write(os.path.join(ROOT, "404.html"), NOT_FOUND)
     write(os.path.join(ROOT, "assets", "js", "site.js"), JS)
     open(os.path.join(ROOT, "CNAME"), "w").write(SITE["domain"] + "\n")
