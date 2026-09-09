@@ -250,8 +250,11 @@ body.work{overflow:auto;overflow-x:hidden}
   color:var(--soft);margin:0}
 .facts dd{margin:0;font-size:13px;line-height:1.45}
 
-.wlead{font-size:clamp(20px,2.3vw,31px);line-height:1.25;letter-spacing:-.015em;
-  max-width:20em;margin:0;text-wrap:pretty}
+/* the lead is a couple of sentences now rather than one line, so it is set a
+   little smaller and a little wider — six lines at 31px read as a headline
+   that had got away from itself */
+.wlead{font-size:clamp(18px,1.85vw,26px);line-height:1.3;letter-spacing:-.012em;
+  max-width:26em;margin:0;text-wrap:pretty}
 .wlead em{font-style:italic}
 .wpara{font-size:clamp(15px,1.15vw,17px);line-height:1.55;max-width:58ch;margin:0;
   text-wrap:pretty}

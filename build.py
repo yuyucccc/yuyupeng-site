@@ -467,7 +467,9 @@ def work_hero(p):
         for i in ims:
             if i["file"] == want:
                 return i
-    for i in ims:
+    # only among the first few: scanning the whole set would happily pass over
+    # the opening board in favour of some landscape detail drawing near the end
+    for i in ims[:3]:
         if i.get("h") and float(i["w"]) / float(i["h"]) >= 1.2:
             return i
     return ims[0]
@@ -602,7 +604,11 @@ def render_project(p, nxt):
 
     u, d = SITE["email"].split("@")
     canonical = "https://" + SITE["domain"] + "/work/" + p["slug"] + "/"
-    desc = p.get("lead") or (p["title"] + " " + EMD + " " + p["place"])
+    # the lead now runs to a couple of sentences; a search result shows about
+    # one, so the description takes the first and leaves the rest to the page
+    lead = p.get("lead") or ""
+    desc = lead.split(". ")[0].rstrip(".") + "." if lead else (
+        p["title"] + " " + EMD + " " + p["place"])
 
     return (work_head(p["title"] + " " + EMD + " " + SITE["name"], desc, rel, canonical)
             + '\n<header class="whead"><a class="wordmark" href="' + rel + '#work">YUYUPENG</a></header>\n'

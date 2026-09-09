@@ -16,7 +16,7 @@
       "place": "Pijlsweerd, Utrecht",
       "years": "2024–2025",
       "group": "professional",
-      "lead": "A worn-out playground in one of Utrecht's densest quarters, rebuilt as ground rather than pavement.",
+      "lead": "De Kameleon was a worn-out playground in one of Utrecht's densest neighbourhoods, and it has been rebuilt as a green one. Paving makes way for soil and grass, the existing trees are kept and given room, and rainwater is held in the ground instead of drained away.",
       "body": [
         "De Kameleon sits on the Balkstraat in Pijlsweerd, a dense nineteenth-century quarter where private gardens are rare and the street is the only open space most children have. The existing playground had worn out — hard surfacing, ageing equipment, hardly any shade.",
         "The new design trades paving for ground. Rainwater is held in the soil instead of drained away, the existing trees are kept and given room, and play is redistributed by age: a water play area in sand for the youngest, grass mounds and a climbing tower beyond.",
@@ -89,8 +89,7 @@
         "02": "Stanleylaan — existing situation",
         "03": "Stanleylaan — new impression",
         "07": "Afrikalaan e.o. — VO plankaart"
-      },
-      "hero": "02.jpg"
+      }
     },
     {
       "slug": "van-eysingalaan",
@@ -98,7 +97,7 @@
       "place": "Transwijk, Utrecht",
       "years": "2025",
       "group": "professional",
-      "lead": "A block courtyard the neighbourhood had stopped using — narrowed in programme, widened in audience.",
+      "lead": "A courtyard between four housing blocks in Transwijk that the children living around it had stopped using. The design gives it back to them: a quieter football cage, room for table tennis and jeu de boules, and grass, shrubs and new trees where the hard surfacing used to be.",
       "body": [
         "The blokplek at Van Eysingalaan 137–199 lies between four housing blocks in Transwijk. Its football cage and basketball court had become the territory of teenagers from further afield, and the children living around it had stopped coming — the survey found almost no resident who said their child played there.",
         "Rather than adding programme, the design narrows it and widens the audience. The cage is rebuilt with sound-dampening fencing on an artificial turf field; the basketball court makes way for a table-tennis table and a jeu de boules court; the hard edges give way to grass, shrubs and new trees.",
@@ -138,7 +137,7 @@
       "place": "Nieuwegein",
       "years": "2022",
       "group": "professional",
-      "lead": "A spatial quality framework for a town centre built on a deck, turning its level changes into a water landscape.",
+      "lead": "Nieuwegein's centre is built on a raised deck, where rain has almost nowhere to go. This spatial quality framework makes room for water again and uses a river landscape as the structure that guides how the centre grows.",
       "body": [
         "Nieuwegein City is a bustling urban atmosphere inside a village setting. Its distinctive feature is an elevated, covered shopping centre where cars park beneath the shops — an infrastructural environment of varying heights and levels, pedestrian bridges and bicycle tunnels.",
         "The town was established through the growth-centre policy, by merging two villages. As the centre keeps expanding it needs a recognisable identity, and a strategic vision to guide that growth. Reading the city's origins and transformation uncovered its evolving role: from growth centre to a green, sustainable oasis.",
@@ -182,7 +181,7 @@
       "place": "IJdoornschoollocatie, Amsterdam",
       "years": "2021",
       "group": "professional",
-      "lead": "A green seam stitching two Amsterdam-Noord neighbourhoods together, designed as habitat as much as public space.",
+      "lead": "A green zone linking Tuindorp Nieuwendam and Waterlandplein in Amsterdam-Noord, along the axis that runs from the Schellingwouderbreek out to the landscape beyond. It is designed as much for urban nature as for people, with the new housing set into the landscape rather than dropped onto it.",
       "body": [
         "The task was to develop a green urban location with multiple spatial and functional purposes, as part of the urban renewal plan for the Waterlandplein neighbourhood. The area connects Tuindorp Nieuwendam and Waterlandplein, and offers the chance to create a harmonious link between them.",
         "Its character comes from a green axis running from the Schellingwouderbreek across both neighbourhoods towards the Baanakkerspark and the landscape beyond. The development focuses on urban nature, climate adaptation and shared use, integrating new building blocks into the landscape rather than dropping them onto it.",
@@ -217,8 +216,7 @@
       "captions": {
         "06": "Groene schakel",
         "07": "Optimaal verbonden sport en spel"
-      },
-      "hero": "06.jpg"
+      }
     },
     {
       "slug": "parkstraat",
@@ -226,7 +224,7 @@
       "place": "Apeldoorn",
       "years": "2022",
       "group": "professional",
-      "lead": "The southern half of a city street rebuilt as the link from the station to Paleis Het Loo.",
+      "lead": "The southern half of Parkstraat, redesigned as the green connection between Apeldoorn's station and Paleis Het Loo. It became a full urban street in the south and a quieter, more liveable one in the north, worked out with residents and stakeholders through an intensive co-creation process.",
       "body": [
         "The Municipality of Apeldoorn asked us for a preliminary design for the southern part of Parkstraat, as part of the transformation from Hoofdstraat to Parkstraat, building on the vision and model study we developed in 2021. The design was crafted through an intensive co-creation process with stakeholders.",
         "The aim is a strong, recognisable connection between the station area and Griftpark — a vital link from the station to Paleis Het Loo. Parkstraat Zuid becomes a full urban street in the south and a liveable street in the north, without losing its role in the city centre.",
@@ -309,7 +307,7 @@
       "place": "Utrecht",
       "years": "2023",
       "group": "professional",
-      "lead": "A square that behaves as a park — a gradient from forest calm to plaza energy.",
+      "lead": "A square in Utrecht that behaves like a park. The landscape shifts gradually from the calm of woodland at one end to the openness of a city plaza at the other, and carries straight on into the lobby of the building beside it.",
       "body": [
         "The Jaarbeursplein unfolds from the steps of the Forum and wraps around the Jaarbeurspleingebouw. It is a Jaarbeurspark that wears multiple faces, revealing its versatility and adaptability.",
         "The square extends seamlessly into the lobby of the building, connecting the built environment to the landscape. That landscape forms a gradient, transitioning from the tranquillity of a park to the vibrant energy of a plaza, with inviting spaces at a human scale and a pleasant microclimate.",
@@ -350,7 +348,7 @@
       "place": "Delft",
       "years": "2023",
       "group": "professional",
-      "lead": "A building designed as an ecosystem, with each biotope tied to its own indicator species.",
+      "lead": "A building in Delft developed with the ecologists at Stadsnatuur as an ecosystem in its own right. Planting at every height links the plot to the Van Leeuwenhoekpark and the Delft canals, and each biotope is built around the species it is meant to bring back.",
       "body": [
         "Working with Stadsnatuur, a nature-focused agency, we developed the building as an ecosystem. Extensive greenery at various heights forms an ecological connection between parcel 6, the Van Leeuwenhoekpark and the Delft canals. Each biotope is associated with indicator species that contribute to the functioning of the wider urban ecosystem.",
         "The building is designed as an attractive habitat for local wildlife, providing food and nesting opportunities. The biotopes are closely interlinked: the upper rooftops with their grass and herb layers attract insects, which benefit the bats and swifts nesting in the façade. Bee species are drawn to the flowering plants on the rooftop field and pollinate the garden's crops.",
@@ -390,7 +388,7 @@
       "place": "Smart Mobility Hub, Amsterdam",
       "years": "2021",
       "group": "professional",
-      "lead": "A sports park ten metres up, on the roof of a mobility hub.",
+      "lead": "A public sports park ten metres above the street, on the roof of Amsterdam's future Smart Mobility Hub. Organised and informal sport share one continuous landscape, designed together with the people who will use it.",
       "body": [
         "With increasing urbanisation and the acceleration of daily life, the need for sport, greenery, relaxation and time with friends and family is greater than ever. At a height of ten metres, a place is being created where all of this is possible: the sports park on top of the future Smart Mobility Hub.",
         "The park is designed so that every user can take it on their own terms — from the (wheelchair) basketball player, the urban athlete and the football club that has its home base here, to the parents bringing children to the playground and the person who simply wants to sit quietly among the greenery.",
@@ -474,7 +472,7 @@
       "place": "Shenzhen, China",
       "years": "2017",
       "group": "academic",
-      "lead": "Rebuilding the water cycle between sea and land, on a forgotten mangrove edge of Shenzhen.",
+      "lead": "Shenzhen is short of water, and the coastal margin the city has forgotten is where its sewage outfalls meet the sea. The project rebuilds the cycle between land and ocean, turning purification and desalination into places people can walk through.",
       "body": [
         "All that exists on land exists in the sea. Since ancient times the cycle between the two has been a condition for symbiosis; as the city develops, we gradually lose that balance. The site lies in Baoshan District, Shenzhen — a margin the city has forgotten, with a large number of urban sewage outfalls and mangroves declining year by year.",
         "Shenzhen is a water-short city, so the design takes the water cycle as its entry point for restoring the relationship between sea and land. Two main streamlines run through the site: sewage purification from the city to the ocean, and seawater desalination from the sea back to the city.",
@@ -510,7 +508,7 @@
       "place": "Hook of Holland, NL",
       "years": "2018",
       "group": "academic",
-      "lead": "Embracing water into landscape — a park shaped by the tide rather than defended from it.",
+      "lead": "A coastal park at the Hook of Holland that works with the tide instead of defending against it. The ground is modelled so the water stands at a different level at every hour, and the park reads differently each time you come to it.",
       "body": [
         "A study of what happens when a coastal landscape is allowed to work with the tide instead of resisting it. The terrain is modelled so that water reaches different levels at different moments, producing a park that reads differently at every hour of the tidal cycle.",
         "The drawings test a sequence of ground conditions — from permanently wet to rarely flooded — and the vegetation and access each of them can carry."
@@ -538,7 +536,7 @@
       "place": "Venice, Italy",
       "years": "2016",
       "group": "academic",
-      "lead": "Landscape as media between public life and nature, in a Venice that floods on schedule.",
+      "lead": "Piazza San Marco floods on a predictable rhythm. Rather than engineering the acqua alta away, the project rebuilds the square around it, tying every change in level to the water that is going to arrive.",
       "body": [
         "Acqua alta — the exceptional tidal peaks of the northern Adriatic — floods Piazza San Marco on a predictable rhythm. The project treats that flooding not as a failure to be engineered away but as the condition the public space is built around.",
         "Based on the arcade, the basic form is disassembled and reassembled: changes in height are tied to the flood levels, producing a rich variety of conditions that adapt to different activities and echo the existing structure of the square."
@@ -570,7 +568,7 @@
       "place": "Rotterdam, NL",
       "years": "2018",
       "group": "academic",
-      "lead": "A food-community lab: closing the loop between what a neighbourhood eats, wastes and grows.",
+      "lead": "A neighbourhood in Rotterdam organised around food, where growing, eating and composting are treated as one continuous flow rather than three separate systems. A water square and a green carpet along the A20 carry the public side of it.",
       "body": [
         "The project proposes a circular community around food — production, consumption and waste treated as one continuous flow rather than three separate systems.",
         "A water square and a green carpet along the A20 carry the public side of that system, while the detailed plans work out how the flows move through the blocks: growing, harvesting, composting and returning to the soil within walking distance."
