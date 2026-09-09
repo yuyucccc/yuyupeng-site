@@ -265,9 +265,13 @@ body.work{overflow:auto;overflow-x:hidden}
 /* Widths are written per picture by the generator, from its own proportion.
    The alignment alternates so the leftover white changes sides down the page
    instead of forming one unbroken column on the right. */
-.w-inset{margin-left:14%}
-.w-insetR{margin-left:auto;margin-right:7%}
-.w-wideR{margin-left:auto}
+/* Two axes and no others: every block is flush to the left margin or flush to
+   the right one, whatever its width. Floating a block off both — the 14%
+   indent this used to have — leaves edges that line up with nothing, and with
+   pictures of this many different widths that reads as untidy rather than
+   composed. The rhythm comes from the widths and the side, not from drift. */
+.w-inset{margin-left:0}
+.w-insetR,.w-wideR{margin-left:auto;margin-right:0}
 .wpair{display:flex;gap:4%;align-items:flex-start;justify-content:space-between}
 @media(max-width:60rem){
   .w-inset,.w-insetR,.w-wideR{margin-left:0;margin-right:0}

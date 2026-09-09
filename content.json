@@ -341,7 +341,8 @@
           "Paul Plambeck, Merel Cozlijsen"
         ]
       ],
-      "captions": {}
+      "captions": {},
+      "hero": "p20.jpg"
     },
     {
       "slug": "de-koploper",
@@ -426,7 +427,7 @@
         "06": "Section — freefun",
         "07": "Section — pumptrack"
       },
-      "hero": "02.jpg"
+      "hero": "p24.jpg"
     },
     {
       "slug": "tuin-van-overhoeks",
@@ -500,7 +501,8 @@
       "captions": {
         "02": "Site analysis — existing water system",
         "03": "New water treatment system"
-      }
+      },
+      "hero": "p31.jpg"
     },
     {
       "slug": "tidal-park",

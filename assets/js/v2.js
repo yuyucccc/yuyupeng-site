@@ -299,6 +299,26 @@
     });
   });
 
+  // Coming back from a project, the browser restores this page exactly as it
+  // left — mid-zoom, with the clicked picture swollen and every other one held
+  // at opacity 0. Nothing on the page could undo that, which is why "all" did
+  // nothing: the filter was working and the zoom was still covering it. Clear
+  // it on the way back in, and start the field again.
+  function clearZoom() {
+    body.classList.remove('zooming');
+    document.querySelectorAll('.node.zoom').forEach(function (n) {
+      n.classList.remove('zoom');
+      n.style.removeProperty('--zoom');
+      n.style.removeProperty('--tx');
+      n.style.removeProperty('--ty');
+    });
+    // the click stopped the field; restart it only if it really is stopped,
+    // or a restored page would end up with two loops writing transforms
+    if (body.classList.contains('gallery') && !running) startField();
+  }
+  window.addEventListener('pageshow', clearZoom);
+  window.addEventListener('popstate', clearZoom);
+
   document.querySelectorAll('.js-mail').forEach(function (a) {
     var addr = a.dataset.u + '@' + a.dataset.d;
     a.href = 'mailto:' + addr;
