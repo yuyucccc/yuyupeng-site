@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://yuyupeng.com/sitemap.xml
+Sitemap: https://yuyucccc.github.io/yuyupeng-site/sitemap.xml

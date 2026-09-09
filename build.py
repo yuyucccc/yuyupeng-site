@@ -599,7 +599,7 @@ def render_project(p, nxt):
               + '</span></span></a>')
 
     u, d = SITE["email"].split("@")
-    canonical = "https://" + SITE["domain"] + "/work/" + p["slug"] + "/"
+    canonical = site_base() + "/work/" + p["slug"] + "/"
     # the lead now runs to a couple of sentences; a search result shows about
     # one, so the description takes the first and leaves the rest to the page
     lead = p.get("lead") or ""
@@ -812,6 +812,16 @@ def _spread(items, key):
     return out
 
 
+def site_base():
+    """Where the site actually answers. Until the custom domain is registered
+    and pointed, canonical and og:url must name the address that exists — a
+    canonical pointing at a domain that does not resolve tells a crawler the
+    real pages are somewhere unreachable."""
+    if SITE.get("domain_live"):
+        return "https://" + SITE["domain"]
+    return SITE.get("base_url", "https://" + SITE["domain"]).rstrip("/")
+
+
 def render_home_v2():
     idx = {p["slug"]: p for p in PROJECTS}
     picks = _spread([idx[s] for s in GALLERY if s in idx],
@@ -839,7 +849,7 @@ def render_home_v2():
     for k, v in [
         ("TITLE", e(SITE["name"] + " " + EMD + " " + SITE["role"] + ", " + SITE["location"])),
         ("DESC", e(SITE["meta_description"])),
-        ("DOMAIN", SITE["domain"]),
+        ("DOMAIN", site_base()),
         ("FAVICON", FAVICON_V2),
         # Light-DOM children of a custom element stop rendering the moment it
         # upgrades, so this is the mark with no script: form 1, framed in the
@@ -1014,9 +1024,9 @@ def main():
         os.remove(cname)
     open(os.path.join(ROOT, ".nojekyll"), "w").close()
     open(os.path.join(ROOT, "robots.txt"), "w").write(
-        f"User-agent: *\nAllow: /\nSitemap: https://{SITE['domain']}/sitemap.xml\n")
-    urls = [f"https://{SITE['domain']}/"] + [
-        f"https://{SITE['domain']}/work/{p['slug']}/" for p in shown]
+        f"User-agent: *\nAllow: /\nSitemap: {site_base()}/sitemap.xml\n")
+    urls = [site_base() + "/"] + [
+        site_base() + f"/work/{p['slug']}/" for p in shown]
     sm = "\n".join(f"  <url><loc>{u}</loc></url>" for u in urls)
     open(os.path.join(ROOT, "sitemap.xml"), "w").write(
         f'<?xml version="1.0" encoding="UTF-8"?>\n'
