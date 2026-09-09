@@ -1,23 +1,7 @@
 (function () {
   var body = document.body;
   var mark = document.getElementById('mark');
-  var grain = document.getElementById('grain');
-
-  // Film grain, drawn once into a canvas and tiled. Cheaper than an SVG filter
-  // and it looks like emulsion rather than like noise.
-  (function makeGrain() {
-    var n = 150, c = document.createElement('canvas');
-    c.width = c.height = n;
-    var g = c.getContext('2d'), d = g.createImageData(n, n), p = d.data;
-    for (var i = 0; i < p.length; i += 4) {
-      var v = 200 + Math.random() * 55;
-      p[i] = p[i + 1] = p[i + 2] = v;
-      p[i + 3] = 255;
-    }
-    g.putImageData(d, 0, 0);
-    grain.style.backgroundImage = 'url(' + c.toDataURL() + ')';
-    grain.style.backgroundSize = n + 'px ' + n + 'px';
-  })();
+  var dot = document.getElementById('dot');
 
   // capture hooks: ?gallery jumps straight to the constellation, ?eager loads
   // every picture up front, so a screenshot is valid evidence.
@@ -31,38 +15,21 @@
   function open() {
     if (opened) return;
     opened = true;
-    var quick = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (quick) {
-      body.classList.remove('front'); body.classList.add('gallery');
-      startField(); return;
-    }
-    body.classList.add('filming');
-    setTimeout(function () {
-      body.classList.remove('front');
-      body.classList.add('gallery');
-      startField();
-    }, 420);
-    setTimeout(function () { body.classList.remove('filming'); }, 1050);
+    body.classList.remove('front');
+    body.classList.add('gallery');
+    startField();
   }
   mark.addEventListener('click', open);
 
-  // ── the constellation moves ──────────────────────────────────────────
-  // Two motions, composed on one element per project:
+  // ── the constellation drifts ─────────────────────────────────────────
+  // Each picture wanders on two slow sines per axis, at periods that do not
+  // divide into each other, so the path never visibly repeats. It ignores the
+  // pointer entirely: the drift is the whole motion, and it looks the same
+  // whether or not anyone is moving a mouse.
   //
-  //   drift   two slow sines per axis at periods that do not divide into each
-  //           other, so the path never visibly repeats
-  //   follow  the whole field lags after the pointer. tosen.es, the reference,
-  //           has no idle motion at all — everything you see there is the
-  //           cursor dragging the cluster around — so this is the half that
-  //           carries the range, and the drift only keeps it alive when the
-  //           page is left alone.
-  //
-  // Both are computed here rather than in CSS keyframes, because the threads
-  // have to end exactly where the pictures are, and reading that back out of
-  // layout every frame would force ten reflows.
+  // Computed here rather than in CSS keyframes because the pictures have to
+  // be kept off each other, which needs all ten positions in one place.
   var DRIFT  = 0.055;   // of the window's short side, at full depth
-  var FOLLOW = 0.115;   // of the window, at full depth
-  var LAG    = 0.055;   // how slowly the field catches up with the pointer
   var EDGE   = 12;      // px of window margin a picture may never cross
   var GAP    = 1.03;    // how close two footprints may come, 1 = exactly touching
 
@@ -76,7 +43,6 @@
     return {
       el: el,
       d: el.querySelector('.node__d'),
-      line: null,
       hw: 0, hh: 0, ox: 0, oy: 0,
       x: parseFloat(el.style.getPropertyValue('--x')),
       y: parseFloat(el.style.getPropertyValue('--y')),
@@ -90,10 +56,7 @@
     };
   });
 
-  var lines = document.querySelectorAll('.threads line');
-  nodes.forEach(function (n, i) { n.line = lines[i] || null; });
-
-  var pxT = 0, pyT = 0, px = 0, py = 0, running = false;
+  var running = false;
 
   // asymptotic limit: linear while there is room, flattening onto lo/hi
   function soft(v, lo, hi) {
@@ -125,12 +88,6 @@
   window.addEventListener('resize', function () { if (running) measure(); }, { passive: true });
   window.addEventListener('load', function () { if (running) measure(); });
 
-  window.addEventListener('pointermove', function (ev) {
-    var w = window.innerWidth, h = window.innerHeight;
-    pxT = (ev.clientX / w - 0.5) * 2;    // -1 .. 1
-    pyT = (ev.clientY / h - 0.5) * 2;
-  }, { passive: true });
-
   var X = [], Y = [];
 
   function frame(now) {
@@ -138,21 +95,15 @@
     var w = window.innerWidth, h = window.innerHeight;
     var S = Math.min(w, h), t = now / 1000, i, n;
 
-    px += (pxT - px) * LAG;
-    py += (pyT - py) * LAG;
-
-    // 1 — where each picture wants to be: its own drift, plus the field's lag
-    //     after the pointer, deeper for the small ones
+    // 1 — where each picture wants to be, wider for the small ones
     for (i = 0; i < nodes.length; i++) {
       n = nodes[i];
       X[i] = n.x * w / 100 + n.ox
            + DRIFT * S * n.ax * n.dz * (Math.sin(6.283 * t / n.t1 + n.p1) * 0.66 +
-                                        Math.sin(6.283 * t / n.t2 + n.p2) * 0.34)
-           + px * FOLLOW * w * n.dz;
+                                        Math.sin(6.283 * t / n.t2 + n.p2) * 0.34);
       Y[i] = n.y * h / 100 + n.oy
            + DRIFT * S * n.ay * n.dz * (Math.sin(6.283 * t / n.t3 + n.p3) * 0.66 +
-                                        Math.sin(6.283 * t / n.t4 + n.p4) * 0.34)
-           + py * FOLLOW * h * n.dz;
+                                        Math.sin(6.283 * t / n.t4 + n.p4) * 0.34);
     }
 
     // 2 — and where it may actually go. With this much travel two pictures
@@ -187,11 +138,6 @@
       var dy = soft(Y[i] - uy, EDGE + n.hh - uy, h - EDGE - n.hh - uy);
 
       n.d.style.transform = 'translate3d(' + dx.toFixed(2) + 'px,' + dy.toFixed(2) + 'px,0)';
-      if (n.line) {
-        // the thread stays straight and stays drawn; only its far end travels
-        n.line.setAttribute('x2', (n.x + dx / w * 100).toFixed(3));
-        n.line.setAttribute('y2', (n.y + dy / h * 100).toFixed(3));
-      }
     }
     requestAnimationFrame(frame);
   }
@@ -208,21 +154,67 @@
   }
 
 
-  // Click swells the picture before the project opens, so the tap is felt.
+  // ── opening a project ────────────────────────────────────────────────
+  // The picture grows out of the page while everything else clears, and only
+  // then does the project load. The drift is stopped first, so the frame loop
+  // is not writing a transform underneath the one that is growing.
   document.querySelectorAll('.node').forEach(function (n) {
     n.addEventListener('click', function (ev) {
       if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button !== 0) return;
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var href = n.getAttribute('href');
+      if (still.matches) return;            // no animation, follow the link
       ev.preventDefault();
-      n.classList.add('pop');
-      setTimeout(function () { location.href = n.getAttribute('href'); }, 270);
+      running = false;
+      // Grow it as far as the window allows and no further, then slide it only
+      // as far as it must to stay wholly on screen. A picture that has drifted
+      // near an edge would otherwise grow straight off it, and a photograph
+      // cropped by the window is the one thing she asked me never to do.
+      var im = n.querySelector('img');
+      if (im) {
+        var r = im.getBoundingClientRect();
+        var vw = window.innerWidth, vh = window.innerHeight, M = 24;
+        var z = Math.max(1.2, Math.min(2.4, (vh - M * 2) / r.height,
+                                            (vw - M * 2) / r.width));
+        var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        var hw = r.width * z / 2, hh = r.height * z / 2, tx = 0, ty = 0;
+        if (cx - hw < M) tx = M - (cx - hw);
+        else if (cx + hw > vw - M) tx = vw - M - (cx + hw);
+        if (cy - hh < M) ty = M - (cy - hh);
+        else if (cy + hh > vh - M) ty = vh - M - (cy + hh);
+        n.style.setProperty('--zoom', z.toFixed(3));
+        n.style.setProperty('--tx', tx.toFixed(1) + 'px');
+        n.style.setProperty('--ty', ty.toFixed(1) + 'px');
+      }
+      body.classList.add('zooming');
+      n.classList.add('zoom');
+      setTimeout(function () { location.href = href; }, 560);
     });
   });
 
-  document.querySelectorAll('.js-mail').forEach(function (a) {
-    var addr = a.dataset.u + '@' + a.dataset.d;
-    a.href = 'mailto:' + addr;
-    var t = a.querySelector('.js-mail-txt');
-    if (t) t.textContent = addr;
-  });
+  // ── the pointer ──────────────────────────────────────────────────────
+  // A black dot in place of the arrow. The lag that makes it feel attached to
+  // your hand is a CSS transition on the transform, not a loop here, so it
+  // costs nothing while the constellation is already animating.
+  if (dot && window.matchMedia('(pointer: fine)').matches) {
+    document.documentElement.classList.add('hasdot');
+    var seen = false;
+    window.addEventListener('pointermove', function (ev) {
+      if (ev.pointerType && ev.pointerType !== 'mouse') return;
+      dot.style.transform = 'translate3d(' + ev.clientX + 'px,' + ev.clientY + 'px,0)';
+      if (!seen) { seen = true; dot.classList.add('on'); }
+    }, { passive: true });
+
+    // swell over anything that can be clicked
+    document.addEventListener('pointerover', function (ev) {
+      if (ev.target.closest && ev.target.closest('.node,.mark,a,button')) dot.classList.add('big');
+    });
+    document.addEventListener('pointerout', function (ev) {
+      if (ev.target.closest && ev.target.closest('.node,.mark,a,button')) dot.classList.remove('big');
+    });
+
+    // the arrow is gone, so the dot must not be: put it back when the pointer
+    // leaves the window or the tab, or there is nothing on screen at all
+    document.addEventListener('pointerleave', function () { dot.classList.remove('on'); });
+    window.addEventListener('blur', function () { dot.classList.remove('on'); });
+  }
 })();

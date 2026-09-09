@@ -706,15 +706,11 @@ FAVICON_V2 = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
               "%3Ccircle cx='39' cy='32' r='15' fill='none' stroke='%23000' stroke-width='3'/%3E"
               "%3C/svg%3E")
 
-STORY = ('I perceive my role as a <em>bridge between people and nature</em>. '
-         'Public space, playgrounds and urban landscapes for Gemeente Utrecht '
-         'and Buro Sant en Co.')
-
 def render_home_v2():
     idx = {p["slug"]: p for p in PROJECTS}
     picks = [idx[s] for s in GALLERY if s in idx]
 
-    nodes, threads = [], []
+    nodes = []
     for i, ((x, y, w), p) in enumerate(zip(NODES, picks)):
         h = hero_of(p)
         if not h:
@@ -731,24 +727,18 @@ def render_home_v2():
             + '<span class="node__t">' + e(p["title"]) + "</span>"
             + '<span class="node__m">' + e(p["place"]) + ", " + e(p["years"])
             + "</span></span></span></a>")
-        threads.append('<line x1="50" y1="50" x2="%d" y2="%d"/>' % (x, y))
 
-    u, d = SITE["email"].split("@")
     tpl = open(os.path.join(ROOT, "templates", "home.html"), encoding="utf-8").read()
     for k, v in [
         ("TITLE", e(SITE["name"] + " " + EMD + " " + SITE["role"] + ", " + SITE["location"])),
         ("DESC", e(SITE["meta_description"])),
         ("DOMAIN", SITE["domain"]),
         ("FAVICON", FAVICON_V2),
-        ("STORY", STORY),
-        ("PLACE", e(SITE["location"])),
-        ("MAIL_U", e(u)), ("MAIL_D", e(d)),
         # Light-DOM children of a custom element stop rendering the moment it
         # upgrades, so this is the mark with no script: form 1, framed in the
         # component's own box so nothing shifts when the animation takes over.
         ("EYE", logo_mark("h", forms=(1,), cls="mark__still",
                           vb="-210 -155 420 310")),
-        ("THREADS", "\n  ".join(threads)),
         ("NODES", "\n  ".join(nodes)),
     ]:
         tpl = tpl.replace("{{" + k + "}}", v)

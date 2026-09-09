@@ -2,9 +2,8 @@
    yuyupeng.com — white ground, black ink, after tosen.es.
 
    Two states on one page. FRONT: the mark alone in the middle, the name
-   top left, the story on the right. Click the mark and a film burn takes
-   you to GALLERY: the mark shrinks to the centre and ten projects hang
-   off it on straight threads.
+   top left and nothing else. Click the mark and it shrinks to the centre
+   as GALLERY arrives: ten projects drifting on the white.
 
    The mark is her own drawing, out of logo2.ai — two overlapping circles, an
    eye you look through. It holds three forms of one object, wire, filled and
@@ -24,7 +23,6 @@
   --ink:#000;
   --paper:#fff;
   --soft:#767676;          /* 4.54:1 on white */
-  --thread:rgba(0,0,0,.28);
   --ease:cubic-bezier(.16,1,.3,1);
   --edge:clamp(18px,3.2vw,44px);
   /* Helvetica is not ours to ship; the stack lands on Helvetica where it
@@ -59,28 +57,7 @@ a{color:inherit;text-decoration:none}
 /* full size on the front, where it is the only text; smaller once the work is
    out, so it stops crowding the top-left project */
 body.gallery .wordmark{font-size:clamp(19px,2.1vw,32px)}
-.corner{
-  position:fixed;z-index:30;font-size:11px;font-weight:700;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--soft);
-}
-.corner--br{right:var(--edge);bottom:var(--edge);text-align:right}
-.corner--bl{left:var(--edge);bottom:var(--edge)}
-.corner a:hover{color:var(--ink)}
-
-/* the story, right of centre on the front */
-.story{
-  position:fixed;z-index:30;right:var(--edge);top:50%;transform:translateY(-50%);
-  width:min(30ch,32vw);margin:0;
-  font-family:var(--serif);font-size:clamp(15px,1.35vw,19px);line-height:1.5;
-  transition:opacity .5s var(--ease);
-}
-.story em{font-style:italic}
-body.gallery .story{opacity:0;pointer-events:none}
-
-/* ── the mark ─────────────────────────────────────
-   Her Betweenness symbol, blue swapped for black. The outline never moves —
-   the circles stay circles — and the inside turns: a gradient sweeping inside a
-   fixed circular clip, which is what reads as a sphere rotating in its shell. */
+/* ── the mark ───────────────────────────────────── */
 .mark{
   position:fixed;left:50%;top:50%;z-index:25;
   /* 420 x 310 — the box her animation is drawn in, wide enough for the ring
@@ -104,14 +81,7 @@ body.gallery .mark{--mark:clamp(146px,13.7vw,208px);cursor:default}
 personal-logo-fusion{display:block;width:100%;height:100%}
 .mark__still{width:100%;height:100%;display:block;overflow:visible}
 
-/* ── threads and projects ─────────────────────────── */
-.threads{
-  position:fixed;inset:0;z-index:10;width:100%;height:100%;
-  pointer-events:none;opacity:0;transition:opacity .8s var(--ease) .25s;
-}
-body.gallery .threads{opacity:1}
-.threads line{stroke:var(--thread);stroke-width:1;vector-effect:non-scaling-stroke}
-
+/* ── the projects ─────────────────────────────────── */
 .field{position:fixed;inset:0;z-index:20;pointer-events:none}
 .node{
   position:absolute;left:var(--x);top:var(--y);width:var(--w);
@@ -131,20 +101,16 @@ body.gallery .node:nth-child(9){transition-delay:.4s}
 body.gallery .node:nth-child(10){transition-delay:.45s}
 
 /* Pictures are shown exactly as they are — no filter, no dimming. They drift
-   continuously, lift a little under the pointer, and swell on click before the
-   project opens. */
+   continuously and lift a little under the pointer; the click is handled by
+   .zoom further down. */
 .node img{width:100%;height:auto}
 .node__in{display:block;transition:transform .5s var(--ease)}
 .node:hover .node__in,.node:focus-visible .node__in{transform:scale(1.06)}
-.node.pop .node__in{transform:scale(1.19);transition-duration:.28s}
 .node:hover,.node:focus-visible{z-index:24}
 
 /* Three transforms, three elements, so none of them fight:
    .node   places the picture and plays the entrance
-   .node__d carries the motion — drift plus the lag after the pointer, written
-            by script every frame, because the threads must end exactly where
-            the pictures are and reading that back from layout would force ten
-            reflows a frame
+   .node__d carries the drift, written by script every frame
    .node__in scales under the pointer and on the click */
 .node__d{display:block;will-change:transform}
 .node__t,.node__m{display:block;
@@ -156,45 +122,56 @@ body.gallery .node:nth-child(10){transition-delay:.45s}
 .node__m{font-size:10px;color:var(--soft);letter-spacing:.04em}
 .node:hover .node__t{text-decoration:underline;text-underline-offset:3px}
 
-/* ── the film burn ────────────────────────────────── */
-.grain{
-  position:fixed;inset:0;z-index:70;pointer-events:none;opacity:0;
-  mix-blend-mode:multiply;
+/* ── the pointer ─────────────────────────────────────
+   A black dot instead of an arrow. It trails the pointer by a tenth of a
+   second, which is what makes it feel attached to your hand rather than
+   drawn at it, and swells over anything you can click. Only where there is
+   a real pointer to replace — a touch screen keeps its own behaviour. */
+.dot{display:none}
+@media(pointer:fine){
+  /* the arrow is only given up once the dot is actually running — if the
+     script never arrives, hiding the cursor would leave nothing to point with */
+  .hasdot body,.hasdot a,.hasdot button,.hasdot .node{cursor:none}
+  .hasdot .dot{
+    display:block;position:fixed;left:0;top:0;z-index:80;
+    width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;
+    background:var(--ink);pointer-events:none;opacity:0;
+    transform:translate3d(-100px,-100px,0);
+    transition:transform .1s linear,width .22s var(--ease),height .22s var(--ease),
+               margin .22s var(--ease),opacity .25s var(--ease);
+  }
+  .hasdot .dot.on{opacity:1}
+  .hasdot .dot.big{width:52px;height:52px;margin:-26px 0 0 -26px}
 }
-.flash{
-  position:fixed;inset:0;z-index:71;pointer-events:none;background:#fff;opacity:0;
-}
-@keyframes grainUp{0%{opacity:0}18%{opacity:.85}70%{opacity:.6}100%{opacity:0}}
-@keyframes flicker{
-  0%{opacity:0}   6%{opacity:.9}  12%{opacity:.05}
-  20%{opacity:.75} 27%{opacity:0}  38%{opacity:.55}
-  46%{opacity:.02} 60%{opacity:.3} 100%{opacity:0}
-}
-body.filming .grain{animation:grainUp 1s steps(9) 1}
-body.filming .flash{animation:flicker 1s steps(11) 1}
-@media(prefers-reduced-motion:reduce){
-  body.filming .grain,body.filming .flash{animation:none}
-}
+@media(prefers-reduced-motion:reduce){.dot{transition:opacity .25s}}
 
-/* ── hint ─────────────────────────────────────────── */
-.hint{
-  position:fixed;left:50%;bottom:calc(var(--edge) + 26px);transform:translateX(-50%);
-  z-index:30;font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--soft);transition:opacity .4s var(--ease);
+/* ── opening a project ────────────────────────────────
+   The picture grows out of the page and everything else gets out of its
+   way, so the project is arriving rather than the page being replaced. */
+.node.zoom{z-index:40}
+/* the photograph grows, not the photograph-plus-caption box, or the picture
+   would ride upwards as it scaled. --zoom is set per click so a tall picture
+   grows to fill the window without ever being cropped by it. */
+.node.zoom .node__in{transform:translate(var(--tx,0),var(--ty,0));
+  transition:transform .66s cubic-bezier(.22,1,.36,1)}
+.node.zoom img{transform:scale(var(--zoom,2));transition:transform .66s cubic-bezier(.22,1,.36,1)}
+.node.zoom .node__t,.node.zoom .node__m{opacity:0;transition:opacity .25s var(--ease)}
+body.zooming .node:not(.zoom),body.zooming .mark{
+  opacity:0;transition:opacity .45s var(--ease);pointer-events:none;
 }
-body.gallery .hint{opacity:0}
+@media(prefers-reduced-motion:reduce){
+  .node.zoom img,.node.zoom .node__in{transition:none}
+  body.zooming .node:not(.zoom),body.zooming .mark{transition:none}
+}
 
 /* ── phone ────────────────────────────────────────────
    A ten-node constellation is unusable at 375px. The mark still opens the
    work, but the projects arrive as an ordinary list. */
 @media(max-width:56rem){
   body{overflow:auto}
-  .story{position:static;width:auto;transform:none;
-    margin:0;padding:0 var(--edge);max-width:34ch}
   .mark{position:relative;left:auto;top:auto;margin:0 auto}
   body.front .mark{--mark:min(62vw,300px)}
   body.gallery .mark{--mark:min(34vw,150px)}
-  .threads{display:none}
   .field{position:static;pointer-events:auto;display:grid;gap:34px;
     padding:40px var(--edge) 90px;grid-template-columns:1fr}
   .node{position:static;width:auto!important;transform:none;opacity:1;pointer-events:auto;
@@ -202,6 +179,5 @@ body.gallery .hint{opacity:0}
   body.gallery .node{display:block;transform:none}
   .frontwrap{min-height:100svh;display:flex;flex-direction:column;
     align-items:center;justify-content:center;gap:30px;padding:90px var(--edge)}
-  .hint{position:static;transform:none;text-align:center}
 }
 @media(min-width:56.01rem){.frontwrap{display:contents}}
