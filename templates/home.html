@@ -28,9 +28,16 @@
   </button>
 </div>
 
+<nav class="side" id="side" aria-label="Filter the work">
+  <button class="side__b is-on" type="button" data-group="professional" aria-pressed="true">professional works</button>
+  <button class="side__b is-on" type="button" data-group="academic" aria-pressed="true">academic works</button>
+</nav>
+
 <nav class="field" aria-label="Selected work">
   {{NODES}}
 </nav>
+
+<p class="corner corner--br"><a class="js-mail" href="#" data-u="{{MAIL_U}}" data-d="{{MAIL_D}}"><span class="js-mail-txt">{{MAIL_U}}&#8203;<span aria-hidden="true"> [at] </span><span class="sr">@</span>&#8203;{{MAIL_D}}</span></a></p>
 
 <div class="dot" id="dot" aria-hidden="true"></div>
 

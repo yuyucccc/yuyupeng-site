@@ -688,17 +688,20 @@ def logo_mark(idp="m", forms=(1, 2, 3), ox=0.0, oy=0.0, cls="mark__svg",
 # only *positioned* by CSS, never injected by script, so a crawler and a screen
 # reader both get the whole list even though the page looks like a canvas.
 
-GALLERY = ["kameleon-speelplaats", "kei-3-0", "van-eysingalaan", "city-nieuwegein",
-           "groene-zoom", "parkstraat", "kloppend-hart-soest", "jaarbeursplein",
-           "de-koploper", "sport-dak-park"]
+# Everything in content.json except the three she pulled: Overhoeks, KEI 3.0
+# and Soest. The academic work sits in the same constellation as the built
+# work — the two lines on the left filter it, they do not separate it.
+GALLERY = [s for s in [p["slug"] for p in PROJECTS]
+           if s not in ("tuin-van-overhoeks", "kei-3-0", "kloppend-hart-soest")]
 
-# centre x%, centre y%, width% — a loose ring around the mark, sizes varied hard,
-# nothing closer than ~18% to the centre where the mark sits.
-# Held off the margins by about the distance the motion can travel, so a
+# centre x%, centre y%, width% — a loose ring around the mark, sizes varied
+# hard. Held off the margins by about the distance the motion can travel, so a
 # picture near an edge still has somewhere to go and does not spend its life
-# pinned against the glass.
-NODES = [(28, 24, 14), (48, 16, 10), (72, 20, 12), (84, 54, 10), (76, 67, 13),
-         (56, 80, 11), (34, 76, 13), (18, 62, 10), (17, 35, 11), (66, 41, 8)]
+# pinned against the glass. The furniture — the name, the two filters, the
+# address — is kept clear by the script, not by these numbers.
+NODES = [(29, 19, 13), (47, 13, 10), (64, 18, 12), (80, 27,  9),
+         (87, 47, 11), (83, 68, 10), (67, 81, 12), (50, 85,  9),
+         (33, 78, 13), (16, 67, 10), (14, 31, 11), (33, 42,  8)]
 
 FAVICON_V2 = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
               "viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23fff'/%3E"
@@ -706,9 +709,26 @@ FAVICON_V2 = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
               "%3Ccircle cx='39' cy='32' r='15' fill='none' stroke='%23000' stroke-width='3'/%3E"
               "%3C/svg%3E")
 
+def _spread(items, key):
+    """Order so each group is scattered around the ring rather than bunched.
+    Filtering to one group has to leave a composition, not a cluster in one
+    corner — largest-remainder, the same rule that shares out seats."""
+    groups = {}
+    for it in items:
+        groups.setdefault(key(it), []).append(it)
+    total, out, taken = len(items), [], {g: 0 for g in groups}
+    for slot in range(total):
+        g = max(sorted(groups),
+                key=lambda g: len(groups[g]) * (slot + 1) / total - taken[g])
+        out.append(groups[g][taken[g]])
+        taken[g] += 1
+    return out
+
+
 def render_home_v2():
     idx = {p["slug"]: p for p in PROJECTS}
-    picks = [idx[s] for s in GALLERY if s in idx]
+    picks = _spread([idx[s] for s in GALLERY if s in idx],
+                    lambda p: p.get("group", "professional"))
 
     nodes = []
     for i, ((x, y, w), p) in enumerate(zip(NODES, picks)):
@@ -716,12 +736,12 @@ def render_home_v2():
         if not h:
             continue
         alt = p["title"] + " " + EMD + " " + p["place"]
-        # Depth: the small pictures read as further off, so they answer the
-        # pointer hardest and drift widest. Widths run 8–14%.
+        # Depth: the small pictures read as further off, so they drift widest.
         dz = round(1.35 - (w - 8) * 0.075, 3)
         nodes.append(
-            '<a class="node" style="--x:%d%%;--y:%d%%;--w:%d%%;--dz:%g" href="work/%s/">'
-            % (x, y, w, dz, p["slug"])
+            '<a class="node" data-group="%s" '
+            'style="--x:%d%%;--y:%d%%;--w:%d%%;--dz:%g" href="work/%s/">'
+            % (e(p.get("group", "professional")), x, y, w, dz, p["slug"])
             + '<span class="node__d"><span class="node__in">'
             + picture(p["slug"], h, "", alt, w)
             + '<span class="node__t">' + e(p["title"]) + "</span>"
@@ -740,6 +760,8 @@ def render_home_v2():
         ("EYE", logo_mark("h", forms=(1,), cls="mark__still",
                           vb="-210 -155 420 310")),
         ("NODES", "\n  ".join(nodes)),
+        ("MAIL_U", e(SITE["email"].split("@")[0])),
+        ("MAIL_D", e(SITE["email"].split("@")[1])),
     ]:
         tpl = tpl.replace("{{" + k + "}}", v)
     return tpl

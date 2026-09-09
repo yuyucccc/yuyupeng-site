@@ -57,6 +57,34 @@ a{color:inherit;text-decoration:none}
 /* full size on the front, where it is the only text; smaller once the work is
    out, so it stops crowding the top-left project */
 body.gallery .wordmark{font-size:clamp(19px,2.1vw,32px)}
+/* ── the filters and the address ──────────────────────
+   Both belong to the gallery: the front stays bare. The filters are two lines
+   at the left margin, black when their work is showing and grey when it is
+   not, so the page always says which half you are looking at. */
+.side{
+  position:fixed;left:var(--edge);top:50%;transform:translateY(-50%);z-index:30;
+  display:flex;flex-direction:column;gap:.55em;
+  opacity:0;pointer-events:none;transition:opacity .6s var(--ease) .2s;
+}
+body.gallery .side{opacity:1;pointer-events:auto}
+.side__b{
+  appearance:none;background:none;border:0;padding:0;margin:0;font:inherit;
+  font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--soft);text-align:left;cursor:pointer;
+  transition:color .35s var(--ease);
+}
+.side__b.is-on{color:var(--ink)}
+.side__b:hover{color:var(--ink)}
+
+.corner{
+  position:fixed;right:var(--edge);bottom:var(--edge);z-index:30;margin:0;
+  font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--soft);
+  opacity:0;pointer-events:none;transition:opacity .6s var(--ease) .2s;
+}
+body.gallery .corner{opacity:1;pointer-events:auto}
+.corner a:hover{color:var(--ink)}
+
 /* ── the mark ───────────────────────────────────── */
 .mark{
   position:fixed;left:50%;top:50%;z-index:25;
@@ -90,6 +118,9 @@ personal-logo-fusion{display:block;width:100%;height:100%}
   transition:opacity .7s var(--ease),transform .7s var(--ease);
 }
 body.gallery .node{opacity:1;transform:translate(-50%,-50%);pointer-events:auto}
+/* filtered out: it keeps drifting where you cannot see it, so it is already in
+   its place when it comes back rather than sliding in from wherever it stopped */
+body.gallery .node.node--off{opacity:0;pointer-events:none}
 body.gallery .node:nth-child(2){transition-delay:.05s}
 body.gallery .node:nth-child(3){transition-delay:.1s}
 body.gallery .node:nth-child(4){transition-delay:.15s}
@@ -141,7 +172,7 @@ body.gallery .node:nth-child(10){transition-delay:.45s}
                margin .22s var(--ease),opacity .25s var(--ease);
   }
   .hasdot .dot.on{opacity:1}
-  .hasdot .dot.big{width:52px;height:52px;margin:-26px 0 0 -26px}
+  .hasdot .dot.big{width:24px;height:24px;margin:-12px 0 0 -12px}
 }
 @media(prefers-reduced-motion:reduce){.dot{transition:opacity .25s}}
 
@@ -172,6 +203,13 @@ body.zooming .node:not(.zoom),body.zooming .mark{
   .mark{position:relative;left:auto;top:auto;margin:0 auto}
   body.front .mark{--mark:min(62vw,300px)}
   body.gallery .mark{--mark:min(34vw,150px)}
+  /* in the flow rather than pinned, and still only once the work is out —
+     on the front they would take up space as well as show */
+  .side{position:static;transform:none;flex-direction:row;justify-content:center;
+    gap:1.4em;padding:26px var(--edge) 0;display:none}
+  body.gallery .side{display:flex;opacity:1;pointer-events:auto}
+  .corner{position:static;text-align:center;padding:0 var(--edge) 44px;display:none}
+  body.gallery .corner{display:block;opacity:1;pointer-events:auto}
   .field{position:static;pointer-events:auto;display:grid;gap:34px;
     padding:40px var(--edge) 90px;grid-template-columns:1fr}
   .node{position:static;width:auto!important;transform:none;opacity:1;pointer-events:auto;

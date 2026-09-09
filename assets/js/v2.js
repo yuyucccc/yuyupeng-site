@@ -43,6 +43,8 @@
     return {
       el: el,
       d: el.querySelector('.node__d'),
+      group: el.getAttribute('data-group') || 'professional',
+      on: true,
       hw: 0, hh: 0, ox: 0, oy: 0,
       x: parseFloat(el.style.getPropertyValue('--x')),
       y: parseFloat(el.style.getPropertyValue('--y')),
@@ -88,7 +90,25 @@
   window.addEventListener('resize', function () { if (running) measure(); }, { passive: true });
   window.addEventListener('load', function () { if (running) measure(); });
 
-  var X = [], Y = [];
+  // The name, the two filters and the address are fixed, so the separation
+  // pass has to know about them or a picture will drift straight over the one
+  // line that says which half of the work you are looking at. Re-read every
+  // few frames: the mark is still shrinking, and the filters still fading in,
+  // for most of a second after the gallery opens.
+  var FURNITURE = ['.wordmark', '.side', '.corner--br', '.mark'], furn = [];
+  function measureFurniture() {
+    furn.length = 0;
+    for (var k = 0; k < FURNITURE.length; k++) {
+      var el = document.querySelector(FURNITURE[k]);
+      if (!el) continue;
+      var r = el.getBoundingClientRect();
+      if (!r.width || !r.height) continue;
+      furn.push({ cx: r.left + r.width / 2, cy: r.top + r.height / 2,
+                  hw: r.width / 2 + 10, hh: r.height / 2 + 10 });
+    }
+  }
+
+  var X = [], Y = [], tick = 0;
 
   function frame(now) {
     if (!running) return;
@@ -110,10 +130,17 @@
     //     will meet, and a caption vanishing behind a neighbour's photograph
     //     is the one collision that costs you a project. Boxes are separated
     //     along whichever axis they overlap least, which is the shortest way
-    //     out, so they slide past each other instead of shoving.
+    //     out, so they slide past each other instead of shoving. Only what is
+    //     on screen takes part: a filtered-out picture must not hold a space.
+    if ((tick++ % 8) === 0) measureFurniture();
+    var act = [];
+    for (i = 0; i < nodes.length; i++) if (nodes[i].on) act.push(i);
+
     for (var pass = 0; pass < 3; pass++) {
-      for (i = 0; i < nodes.length; i++) {
-        for (var j = i + 1; j < nodes.length; j++) {
+      for (var a = 0; a < act.length; a++) {
+        i = act[a];
+        for (var b = a + 1; b < act.length; b++) {
+          var j = act[b];
           var sw = (nodes[i].hw + nodes[j].hw) * GAP;
           var sh = (nodes[i].hh + nodes[j].hh) * GAP;
           var ox = sw - Math.abs(X[j] - X[i]);
@@ -126,6 +153,15 @@
             var sy = (Y[j] >= Y[i] ? 1 : -1) * oy * 0.5;
             Y[i] -= sy; Y[j] += sy;
           }
+        }
+        // the furniture does not move, so the picture takes the whole push
+        for (var f = 0; f < furn.length; f++) {
+          var F = furn[f];
+          var fw = nodes[i].hw + F.hw, fh = nodes[i].hh + F.hh;
+          var fx = fw - Math.abs(F.cx - X[i]), fy = fh - Math.abs(F.cy - Y[i]);
+          if (fx <= 0 || fy <= 0) continue;
+          if (fx / fw < fy / fh) X[i] += (X[i] >= F.cx ? 1 : -1) * fx;
+          else                   Y[i] += (Y[i] >= F.cy ? 1 : -1) * fy;
         }
       }
     }
@@ -146,8 +182,40 @@
     if (running || still.matches || phone.matches || !nodes.length) return;
     running = true;
     measure();
+    measureFurniture();
     requestAnimationFrame(frame);
   }
+
+  // ── the two filters ──────────────────────────────────────────────────
+  // Both on to begin with. Clicking a line shows that half alone; clicking it
+  // again, when it is already the only one showing, brings everything back. So
+  // the pair can never both be off, and there is always a way back to all of it.
+  var showing = { professional: true, academic: true };
+  var filters = [].slice.call(document.querySelectorAll('.side__b'));
+
+  function applyFilter() {
+    nodes.forEach(function (n) {
+      n.on = !!showing[n.group];
+      n.el.classList.toggle('node--off', !n.on);
+    });
+    filters.forEach(function (b) {
+      var lit = !!showing[b.getAttribute('data-group')];
+      b.classList.toggle('is-on', lit);
+      b.setAttribute('aria-pressed', lit ? 'true' : 'false');
+    });
+  }
+
+  filters.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var g = b.getAttribute('data-group');
+      var alone = showing[g] && Object.keys(showing).every(function (k) {
+        return k === g || !showing[k];
+      });
+      Object.keys(showing).forEach(function (k) { showing[k] = alone || k === g; });
+      applyFilter();
+    });
+  });
+  applyFilter();
 
   if (wantGallery) {
     body.classList.remove('front'); body.classList.add('gallery'); startField();
@@ -173,8 +241,8 @@
       if (im) {
         var r = im.getBoundingClientRect();
         var vw = window.innerWidth, vh = window.innerHeight, M = 24;
-        var z = Math.max(1.2, Math.min(2.4, (vh - M * 2) / r.height,
-                                            (vw - M * 2) / r.width));
+        var z = Math.max(1.15, Math.min(1.75, (vh - M * 2) / r.height,
+                                              (vw - M * 2) / r.width));
         var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
         var hw = r.width * z / 2, hh = r.height * z / 2, tx = 0, ty = 0;
         if (cx - hw < M) tx = M - (cx - hw);
@@ -189,6 +257,13 @@
       n.classList.add('zoom');
       setTimeout(function () { location.href = href; }, 560);
     });
+  });
+
+  document.querySelectorAll('.js-mail').forEach(function (a) {
+    var addr = a.dataset.u + '@' + a.dataset.d;
+    a.href = 'mailto:' + addr;
+    var t = a.querySelector('.js-mail-txt');
+    if (t) t.textContent = addr;
   });
 
   // ── the pointer ──────────────────────────────────────────────────────
