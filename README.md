@@ -11,7 +11,7 @@ You need a GitHub account. Replace `USERNAME` below with your GitHub username.
 
 ### 1. Make an empty repository on GitHub
 
-Go to <https://github.com/new>. Name it `yuyupeng-site`. **Do not** tick
+Go to <https://github.com/new>. Name it `yuyucccc.github.io`. **Do not** tick
 "Add a README", "Add .gitignore" or "Choose a license" — the repo must be empty,
 otherwise the next step conflicts.
 
@@ -19,7 +19,7 @@ otherwise the next step conflicts.
 
 ```bash
 cd /Users/uu/Archive_Portfolio/website/yuyupeng-site
-git remote add origin https://github.com/USERNAME/yuyupeng-site.git
+git remote add origin https://github.com/yuyucccc/yuyucccc.github.io.git
 git push -u origin main
 ```
 
@@ -33,7 +33,7 @@ macOS will remember it after the first time.
 In the repo: **Settings → Pages**. Under "Build and deployment", set Source to
 **Deploy from a branch**, branch **main**, folder **/ (root)**. Save.
 
-Wait a minute, then your site is live at `https://USERNAME.github.io/yuyupeng-site/`.
+Wait a minute, then your site is live at `https://yuyucccc.github.io/`.
 
 ### 4. Point yuyupeng.com at it
 
