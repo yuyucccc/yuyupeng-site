@@ -1003,7 +1003,15 @@ def main():
         write(os.path.join(ROOT, "work", p["slug"], "index.html"), render_project(p, nxt))
     write(os.path.join(ROOT, "404.html"), NOT_FOUND)
     write(os.path.join(ROOT, "assets", "js", "site.js"), JS)
-    open(os.path.join(ROOT, "CNAME"), "w").write(SITE["domain"] + "\n")
+    # CNAME hands the site to the custom domain. Writing it before that domain
+    # exists points GitHub at an address that does not resolve and takes the
+    # github.io URL down with it, so it is written only once she says the domain
+    # is live: set "domain_live": true in content.json.
+    cname = os.path.join(ROOT, "CNAME")
+    if SITE.get("domain_live"):
+        open(cname, "w").write(SITE["domain"] + "\n")
+    elif os.path.exists(cname):
+        os.remove(cname)
     open(os.path.join(ROOT, ".nojekyll"), "w").close()
     open(os.path.join(ROOT, "robots.txt"), "w").write(
         f"User-agent: *\nAllow: /\nSitemap: https://{SITE['domain']}/sitemap.xml\n")
