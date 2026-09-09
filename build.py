@@ -448,7 +448,29 @@ def render_home():
 # two different sizes, one indented off the axis. Nothing is cropped and
 # nothing is uniform, which is the whole reason for the shape list below.
 
-WORK_SHAPES = ["wide", "pair", "inset", "pairEq"]
+# The shapes alternate which side they hang from. Left-aligned blocks one after
+# another leave a single unbroken column of white down the right of the whole
+# page; whitespace should be a rest between pictures, not a margin the page
+# never uses. Pairs spread edge to edge, which breaks the column outright.
+WORK_SHAPES = ["wide", "pair", "insetR", "pairEq", "wideR", "inset"]
+
+
+def work_hero(p):
+    """The opening plate. A landscape picture holds the top of a page far
+    better than a portrait one, so prefer one — unless she named a hero, or the
+    project simply has none, as the all-portrait ones do."""
+    ims = imgs_for(p["slug"])
+    if not ims:
+        return None
+    want = p.get("hero")
+    if want:
+        for i in ims:
+            if i["file"] == want:
+                return i
+    for i in ims:
+        if i.get("h") and float(i["w"]) / float(i["h"]) >= 1.2:
+            return i
+    return ims[0]
 
 
 def work_head(title, desc, rel, canonical):
@@ -483,7 +505,8 @@ def _fig(p, im, rel, cls):
     """One picture, sized from its own proportion, and its caption if she wrote one."""
     cap = p.get("captions", {}).get(im["file"].split(".")[0])
     alt = p["title"] + " " + EMD + " " + p["place"]
-    top = {"w-wide": 78, "w-inset": 62, "w-a": 56, "w-b": 40, "w-eq": 48}.get(cls, 60)
+    top = {"w-wide": 78, "w-wideR": 78, "w-inset": 62, "w-insetR": 62,
+           "w-a": 56, "w-b": 40, "w-eq": 48}.get(cls, 60)
     ratio = float(im["w"]) / float(im["h"]) if im.get("h") else 1.5
     w = min(top, FIG_H * ratio)
     return ('<figure class="wfig ' + cls + '" style="width:%.1f%%">' % w
@@ -495,7 +518,7 @@ def _fig(p, im, rel, cls):
 def render_project(p, nxt):
     rel = "../../"
     ims = imgs_for(p["slug"])
-    hero = hero_of(p)
+    hero = work_hero(p)
     rest = [i for i in ims if i is not hero]
 
     # ── group the pictures into blocks of varied shape ──────────────────
@@ -505,7 +528,12 @@ def render_project(p, nxt):
         if shape in ("pair", "pairEq") and len(r) >= 2:
             groups.append((shape, [r.pop(0), r.pop(0)]))
         else:
-            groups.append(("wide" if shape in ("pair", "pairEq") else shape, [r.pop(0)]))
+            # a pair with only one picture left still has to take a side, and
+            # it takes the opposite one to the block before it
+            solo = shape
+            if shape in ("pair", "pairEq"):
+                solo = "wide" if len(groups) % 2 == 0 else "wideR"
+            groups.append((solo, [r.pop(0)]))
 
     # ── the prose, spread through them rather than stacked at the top ───
     body = [x for x in p.get("body", []) if x]
@@ -554,7 +582,7 @@ def render_project(p, nxt):
     desc = p.get("lead") or (p["title"] + " " + EMD + " " + p["place"])
 
     return (work_head(p["title"] + " " + EMD + " " + SITE["name"], desc, rel, canonical)
-            + '\n<header class="whead"><a class="wordmark" href="' + rel + '">YUYUPENG</a></header>\n'
+            + '\n<header class="whead"><a class="wordmark" href="' + rel + '#work">YUYUPENG</a></header>\n'
             + '<main class="wrap">\n'
             + '  <section class="wtop">\n'
             + '    <div class="wtop__l"><h1 class="wtitle">' + e(p["title"]) + '</h1>'

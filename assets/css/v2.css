@@ -262,11 +262,15 @@ body.work{overflow:auto;overflow-x:hidden}
 .wfig{margin:0}
 .wfig img{width:100%;height:auto}
 .wfig figcaption{margin-top:11px;font-size:11px;line-height:1.5;color:var(--soft)}
-/* widths are written per picture by the generator, from its own proportion */
+/* Widths are written per picture by the generator, from its own proportion.
+   The alignment alternates so the leftover white changes sides down the page
+   instead of forming one unbroken column on the right. */
 .w-inset{margin-left:14%}
-.wpair{display:flex;gap:4%;align-items:flex-start}
+.w-insetR{margin-left:auto;margin-right:7%}
+.w-wideR{margin-left:auto}
+.wpair{display:flex;gap:4%;align-items:flex-start;justify-content:space-between}
 @media(max-width:60rem){
-  .w-inset{margin-left:0}
+  .w-inset,.w-insetR,.w-wideR{margin-left:0;margin-right:0}
   .wpair{display:block}
   .wrap .wfig{width:100%!important}
   .wpair .wfig + .wfig{margin-top:clamp(24px,5vw,40px)}

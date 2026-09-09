@@ -9,7 +9,10 @@
   if (/[?&]eager/.test(q)) {
     document.querySelectorAll('img[loading="lazy"]').forEach(function (im) { im.loading = 'eager'; });
   }
-  var wantGallery = /[?&]gallery/.test(q);
+  // #work is the gallery's own address. A project page links back to it, and
+  // opening the gallery writes it into the URL, so the browser's own Back from
+  // a project lands on the work rather than on the bare front page.
+  var wantGallery = /[?&]gallery/.test(q) || location.hash === '#work';
 
   var opened = false;
   function open() {
@@ -18,6 +21,11 @@
     body.classList.remove('front');
     body.classList.add('gallery');
     startField();
+    // replace rather than push: Back from here should leave the site the way
+    // it arrived, not step through the front page twice
+    try {
+      history.replaceState(null, '', location.pathname + location.search + '#work');
+    } catch (e) {}
   }
   if (mark) mark.addEventListener('click', open);
 
@@ -303,13 +311,43 @@
   // your hand is a CSS transition on the transform, not a loop here, so it
   // costs nothing while the constellation is already animating.
   if (dot && window.matchMedia('(pointer: fine)').matches) {
-    document.documentElement.classList.add('hasdot');
-    var seen = false;
-    window.addEventListener('pointermove', function (ev) {
-      if (ev.pointerType && ev.pointerType !== 'mouse') return;
-      dot.style.transform = 'translate3d(' + ev.clientX + 'px,' + ev.clientY + 'px,0)';
-      if (!seen) { seen = true; dot.classList.add('on'); }
-    }, { passive: true });
+    var root = document.documentElement;
+
+    // hasdot is what gives up the arrow, so it goes on and off with the dot
+    // itself. Setting it up front meant every fresh page — and every return
+    // from a project — spent its first moments with no pointer at all, which
+    // is why the dot "sometimes" was not there: the arrow was already gone.
+    function showDot(ev) {
+      if (ev && ev.clientX !== undefined) {
+        dot.style.transform = 'translate3d(' + ev.clientX + 'px,' + ev.clientY + 'px,0)';
+        try { sessionStorage.setItem('yp.dot', ev.clientX + ',' + ev.clientY); } catch (e) {}
+      }
+      if (!root.classList.contains('hasdot')) {
+        root.classList.add('hasdot');
+        dot.classList.add('on');
+      }
+    }
+    function hideDot() {
+      root.classList.remove('hasdot');
+      dot.classList.remove('on');
+    }
+
+    // Put it where the pointer was on the page before, but do not show it yet:
+    // the position is a guess until the pointer moves, and a dot in the wrong
+    // place with the arrow hidden is worse than a moment of arrow.
+    try {
+      var last = (sessionStorage.getItem('yp.dot') || '').split(',');
+      if (last.length === 2) {
+        dot.style.transform = 'translate3d(' + (+last[0]) + 'px,' + (+last[1]) + 'px,0)';
+      }
+    } catch (e) {}
+
+    ['pointermove', 'pointerdown', 'pointerover'].forEach(function (t) {
+      window.addEventListener(t, function (ev) {
+        if (ev.pointerType && ev.pointerType !== 'mouse') return;
+        showDot(ev);
+      }, { passive: true });
+    });
 
     // swell over anything that can be clicked
     document.addEventListener('pointerover', function (ev) {
@@ -319,9 +357,8 @@
       if (ev.target.closest && ev.target.closest('.node,.mark,a,button')) dot.classList.remove('big');
     });
 
-    // the arrow is gone, so the dot must not be: put it back when the pointer
-    // leaves the window or the tab, or there is nothing on screen at all
-    document.addEventListener('pointerleave', function () { dot.classList.remove('on'); });
-    window.addEventListener('blur', function () { dot.classList.remove('on'); });
+    // out of the window, or away from it: the arrow comes back with the cursor
+    document.documentElement.addEventListener('mouseleave', hideDot);
+    window.addEventListener('blur', hideDot);
   }
 })();
